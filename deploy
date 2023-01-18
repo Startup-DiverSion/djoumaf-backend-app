@@ -1,0 +1,4 @@
+rsync -av djoumafc@ftp.djoumaf.com:~/opt/cpanel-disk-a/djoumafc/backend -e "ssh -p 21"  --exclude '.git' --exclude '.vscodev' --exclude 'node_modules'
+
+
+cN7RL79+n1Aq.t

@@ -1,0 +1,17 @@
+{
+   "compilerOptions": {
+      // "module": "system",
+      "lib": ["es5", "es6", "dom"],
+      "target": "es5",
+      "module": "commonjs",
+      "moduleResolution": "node",
+      "emitDecoratorMetadata": true,
+      "experimentalDecorators": true,
+
+      // "outFile": "/dist",
+
+      "outDir": "dist"
+   },
+   "emitDecoratorMetadata": true,
+"experimentalDecorators": true,
+}
