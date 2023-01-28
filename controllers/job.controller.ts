@@ -43,7 +43,7 @@ class JobController extends ToApplyJob {
       // Get job data based on id
       const getJob = await jJob.findOne({
          where: { slug },
-         relations:['user.profile','work_place', 'field_activity', 'contract_type'],
+         relations:['user', 'user.profile', 'user.profile.media_profile',  'work_place', 'field_activity', 'contract_type'],
       });
       if (!getJob) return serverError.noDataMatches(res);
 

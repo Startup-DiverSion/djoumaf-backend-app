@@ -1,5 +1,5 @@
 import { OneToMany, Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToOne, ManyToMany, JoinTable } from "typeorm"
-import { Message } from "./message";
+import { Message } from "./talkMessage";
 import { Profile } from './userProfile';
 import { User } from './user';
 

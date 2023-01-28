@@ -10,11 +10,19 @@ const socket = require('socket.io');
 
 // create and setup express app
 const app = express();
-app.use(express.json());
 
 
 //middleware
-app.use(cors());
+// Add a list of allowed origins.
+// If you have more origins you would like to add, you can add them to the array below.
+const allowedOrigins:any = ['http://localhost:5173', 'https://djoumaf.com'];
+
+const options: cors.CorsOptions = {
+  origin: allowedOrigins
+};
+// Then pass these options to cors:
+app.use(cors(options));
+
 app.use(express.json());
 
 
@@ -22,8 +30,7 @@ app.use(express.json());
 
 InitRoutes(app);
 app.use("/images", express.static("public"));
-app.use("/public", express.static(path.join(__dirname, "public")));
-app.use('/', express.static(path.join(__dirname, '../templates')));
+app.use('/', express.static("templates"));
 
 app.set('view engine', 'ejs');
 
@@ -35,8 +42,8 @@ const start = async () => {
       
 
       // STARTING OF SERVER APP
-      server = app.listen(3000, () => {
-         console.log('Server started  => http://localhost:3000');
+      server = app.listen(5001, () => {
+         console.log('Server started  => http://localhost:5001');
       });
 
       // Socket setup

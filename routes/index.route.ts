@@ -15,6 +15,7 @@ import { SendEmailToOldUser } from "../mail/send.mailer";
 import FieldActivityController from "../controllers/field_activity.controller";
 import to_applyController from "../controllers/to_apply.controller";
 import MediaController from "../controllers/media.controller";
+import TalkMailController from "../controllers/talk_mail.controller";
 
 
 /**
@@ -61,6 +62,14 @@ const Routes = (app: any) => {
 
    // ALL ROUTES OF field activity CONTROLLER
    router.get('/number_activities_depending_job', FieldActivityController.number_activities_depending_job);
+
+   // All routes Talks Mail
+   router.get('/talk/mails', TalkMailController.index);
+   router.get('/talk/mails/dj', wareVerifyTokenUser, TalkMailController.indexInTermsOfUserConnected);
+   router.get('/talk/mails/in', TalkMailController.allUserToSendEmail)
+
+   // All routes Talks Chat Message
+   router.get('/talk/messages', FieldActivityController.number_activities_depending_job);
 
    // 
    router.get('/feed', wareVerifyTokenUser, (req: express.Request, res: express.Response) => {

@@ -8,12 +8,10 @@ import { Job } from '../models/jobs';
 import { ToApplyJob } from '../models/jobToApply';
 import userServices from '../services/user.services';
 import { send } from 'process';
+import TalkMailController from './talk_mail.controller';
+import { User } from '../models/user';
 
 class ToApplyController {
-
-
-    
-
    //
    public async index(req: Request, res: Response) {
       try {
@@ -24,26 +22,31 @@ class ToApplyController {
 
    //
    public async show(req: Request, res: Response) {
+      try {
+         // Init
+         const jToApply = db.getRepository(ToApplyJob);
+         const { jobID, userID } = req.body;
 
-        try {
-            // Init
-        const jToApply = db.getRepository(ToApplyJob)
-        const { jobID, userID } = req.body;
-        
+         // Initialize
 
-        // Initialize
+         // Get by specific selection one Apply data
+         const getToApply = userID
+            ? await jToApply.findOne({
+                 where: { user_id: userID, job_id: jobID },
+              })
+            : await jToApply.findOne({
+                 where: { user_id: userID, job_id: jobID },
+              });
+         // Get length of user apply this jobs
+         const getCount = await jToApply.countBy({ job_id: jobID });
+         if (!getToApply)
+            return res.send({ to_apply_job: null, count: getCount });
 
-        // Get by specific selection one Apply data
-        const getToApply = userID ? await jToApply.findOne({where: {user_id: userID , job_id: jobID}}) : await jToApply.findOne({where: {user_id: userID , job_id: jobID}}) 
-        // Get length of user apply this jobs
-        const getCount = await jToApply.countBy({job_id: jobID})
-        if(!getToApply) return res.send({to_apply_job: null, count: getCount})
-
-        // Return
-        return res.send({to_apply_job: getToApply, count: getCount})
-        } catch (error) {
-            serverError.catchError(res, error);
-        }
+         // Return
+         return res.send({ to_apply_job: getToApply, count: getCount });
+      } catch (error) {
+         serverError.catchError(res, error);
+      }
    }
 
    //
@@ -54,19 +57,15 @@ class ToApplyController {
          let newToApply: any;
          let updateToApply: any;
 
-
-      
-
          // Initialize
          const jToApply = db.getRepository(ToApplyJob);
+         const jUser = db.getRepository(User);
          const { Auth } = await userServices.current(req, res);
-         
+
          //Get first apply  > User and Job
          const ifAllwaysApply: any = await jToApply.findOne({
             where: [{ user_id: Auth.user.id, job_id: jobID }],
          });
-         
-        
 
          // Verify if user allways to apply on post
          if (ifAllwaysApply) {
@@ -101,9 +100,28 @@ class ToApplyController {
          if (!saveToApply)
             return serverError.notInsertToDatabase(res, { message: '' });
 
+         // Get user whose id job => jobID
+         const userOwnerOfPost = await jUser.findOne({
+            where: { job: jobID },
+            relations: ['profile'],
+         });
+         if (!userOwnerOfPost) return serverError.noDataMatches(res);
+
+         // Send DjMail to notified the apply user
+         const { saveTalkMail } = await TalkMailController.create(req, res, {
+            receiver: userOwnerOfPost,
+            subject: `Vous avez recu une nouvelle condidacture.`,
+            message: `
+               <h1>Hello ${userOwnerOfPost.profile.first_name}</h1>
+               <a href="#">Voir son profile</a>
+            `,
+         });
+         if (!saveTalkMail) return serverError.notInsertToDatabase(res);
+
          // Send
          return res.send({ to_apply_job: saveToApply });
       } catch (error) {
+         console.log(error);
          serverError.catchError(res, error);
       }
    }

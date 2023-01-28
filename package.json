@@ -13,7 +13,6 @@
   "author": "Emmanuel Diomande",
   "license": "ISC",
   "devDependencies": {
-    "@types/joi": "^17.2.3",
     "@types/node": "^18.11.9",
     "typescript": "^4.7.4"
   },

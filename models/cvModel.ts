@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToOne,OneToMany} from "typeorm"
-import { MediaCv } from "./cvMedia"
+import { MediaCv } from "./mediaUserProfileCV"
 import { UserCv } from "./cvUser"
 
 

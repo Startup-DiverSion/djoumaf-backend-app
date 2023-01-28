@@ -9,13 +9,15 @@ import { Parameter } from '../models/parameter';
 import { Preference } from '../models/userPreference';
 import { ModelCv } from '../models/cvModel';
 import { UserCv } from '../models/cvUser';
-import { MediaCv } from '../models/cvMedia';
+import { MediaCv } from '../models/mediaUserProfileCV';
 import { Role } from '../models/userRole';
 import { ToApplyJob } from '../models/jobToApply';
 import { ExperienceCv } from '../models/cvExperience';
 import { SkillCv } from '../models/cvSkill';
 import { CourseCV } from '../models/cvCourse';
 import { MediaCover } from '../models/mediaUserProfileCover';
+import { TalkMail } from '../models/talkMail';
+import { Chat } from '../models/chat';
 
 export const db = new DataSource({
    type: 'mysql',
@@ -50,6 +52,8 @@ export const db = new DataSource({
       ExperienceCv,
       CourseCV,
       SkillCv,
+      TalkMail,
+      Chat
    ],
    migrations: ['migration/*.js'],
    logging: false,
