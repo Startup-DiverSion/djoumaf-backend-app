@@ -1,12 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Joi = require("joi");
-var JobValidator = /** @class */ (function () {
-    function JobValidator() {
+const Joi = require("joi");
+class JobValidator {
+    constructor() {
     }
     // 
-    JobValidator.prototype.post = function (req) {
-        var schema = Joi.object({
+    post(req) {
+        const schema = Joi.object({
             title: Joi.string().required(),
             field_activity: Joi.string().required(),
             work_place: Joi.string().required(),
@@ -17,7 +17,6 @@ var JobValidator = /** @class */ (function () {
             description: Joi.string().required()
         });
         return schema.validate(req);
-    };
-    return JobValidator;
-}());
+    }
+}
 exports.default = new JobValidator();

@@ -2,38 +2,35 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.startDb = exports.db = void 0;
 require("reflect-metadata");
-var typeorm_1 = require("typeorm");
-var user_1 = require("../models/user");
-var jobs_1 = require("../models/jobs");
-var mediaUserProfile_1 = require("../models/mediaUserProfile");
-var userProfile_1 = require("../models/userProfile");
-var parameterType_1 = require("../models/parameterType");
-var parameter_1 = require("../models/parameter");
-var userPreference_1 = require("../models/userPreference");
-var cvModel_1 = require("../models/cvModel");
-var cvUser_1 = require("../models/cvUser");
-var mediaUserProfileCV_1 = require("../models/mediaUserProfileCV");
-var userRole_1 = require("../models/userRole");
-var jobToApply_1 = require("../models/jobToApply");
-var cvExperience_1 = require("../models/cvExperience");
-var cvSkill_1 = require("../models/cvSkill");
-var cvCourse_1 = require("../models/cvCourse");
-var mediaUserProfileCover_1 = require("../models/mediaUserProfileCover");
-var talkMail_1 = require("../models/talkMail");
-var chat_1 = require("../models/chat");
+const typeorm_1 = require("typeorm");
+const user_1 = require("../models/user");
+const jobs_1 = require("../models/jobs");
+const mediaUserProfile_1 = require("../models/mediaUserProfile");
+const userProfile_1 = require("../models/userProfile");
+const parameterType_1 = require("../models/parameterType");
+const parameter_1 = require("../models/parameter");
+const userPreference_1 = require("../models/userPreference");
+const cvModel_1 = require("../models/cvModel");
+const cvUser_1 = require("../models/cvUser");
+const mediaUserProfileCV_1 = require("../models/mediaUserProfileCV");
+const userRole_1 = require("../models/userRole");
+const jobToApply_1 = require("../models/jobToApply");
+const cvExperience_1 = require("../models/cvExperience");
+const cvSkill_1 = require("../models/cvSkill");
+const cvCourse_1 = require("../models/cvCourse");
+const mediaUserProfileCover_1 = require("../models/mediaUserProfileCover");
+const talkMail_1 = require("../models/talkMail");
+const chat_1 = require("../models/chat");
+const env_config_1 = require("../config/env.config");
+const userFollow_1 = require("../models/userFollow");
 exports.db = new typeorm_1.DataSource({
     type: 'mysql',
-    // Productions
-    // host: "localhost",
-    // username: "djoumaf",
-    // password: "djoumaf-nray-20",
-    // database: "nxs_djoumaf",
-    // Developpement
-    host: 'localhost',
-    username: 'root',
-    password: '',
-    database: 'nxs_djoumaf',
-    port: 3306,
+    host: env_config_1.env.HOST,
+    username: env_config_1.env.USERNAME,
+    password: env_config_1.env.PASSWORD,
+    database: env_config_1.env.DATABASE,
+    charset: env_config_1.env.CHARSET,
+    port: env_config_1.env.PORT_DB,
     entities: [
         user_1.User,
         jobs_1.Job,
@@ -52,19 +49,19 @@ exports.db = new typeorm_1.DataSource({
         cvCourse_1.CourseCV,
         cvSkill_1.SkillCv,
         talkMail_1.TalkMail,
-        chat_1.Chat
+        chat_1.Chat,
+        userFollow_1.Follow
     ],
     migrations: ['migration/*.js'],
     logging: false,
     synchronize: true,
-    connectTimeout: 90000,
 });
-var startDb = function () {
+const startDb = () => {
     exports.db.initialize()
-        .then(function () {
+        .then(() => {
         console.log('Data Source has been initialized!');
     })
-        .catch(function (err) {
+        .catch((err) => {
         console.error('Error during Data Source initialization:', err);
     });
 };

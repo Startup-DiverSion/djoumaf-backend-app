@@ -9,8 +9,8 @@ export class Media {
     @PrimaryGeneratedColumn()
     id: Number
 
-    @Column({type: 'json', nullable: true})
-    url: object
+    @Column({type: 'varchar', nullable: true})
+    url: string
 
     @ManyToOne(() => Profile, (profile) => profile.media_profile, { onDelete: "CASCADE" })
     profile: Profile

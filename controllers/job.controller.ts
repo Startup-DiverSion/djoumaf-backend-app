@@ -24,11 +24,11 @@ class JobController extends ToApplyJob {
 
          // Get all jobs
          const getAllJobs = await jJob.find({relations: ["user",  'profile', 'profile.media_profile', 'profile.media_profile_cover','work_place', 'field_activity', 'contract_type'] })
-
+         if (!getAllJobs) return serverError.noDataMatches(res);
 
          res.status(201).send({ Jobs: getAllJobs });
       } catch (error) {
-         console.log(error);
+         return serverError.catchError(res, error);
       }
    }
 
@@ -77,6 +77,31 @@ class JobController extends ToApplyJob {
             return useValidateError.input(res, error);
          }
 
+         let slugExist: any;
+         let slug: string;
+
+     
+
+         do {
+
+            // Defined the letter associated
+            const letter = 'd j o u m a f'.split(' ')
+            const letterRamdom = Math.floor(Math.random() * letter.length)
+
+            // Defined the slug of profile
+            slug =  `${slugify(title, '_')}_${Math.floor(Math.random() * 10000)}${letter[letterRamdom]}`.toLowerCase();
+
+            // Get profile
+            slugExist = await db
+               .getRepository(Job)
+               .findOne({ where: { slug } });
+            if (slugExist)
+               return useValidateError.withoutInput(res, {
+                  message: 'slug est dèja utiliser !',
+                  path: 'all',
+               });
+         } while (slugExist);
+
          //verification of foreign keys in paramater table
          const verifyForeignKeys = async (Keys: any) => {
             for (let i = 0; i < Keys.length; i++) {
@@ -104,12 +129,13 @@ class JobController extends ToApplyJob {
          // Create and add a new jobs
          const newJob = jJob.create({
             title,
-            slug: slugify(title, '_'),
+            slug,
             description,
             field_activity,
             work_place,
             contract_type,
-            localization: place,
+            country: localizaton_country?.name,
+            city: localizaton_city?.name,
             dead_line: moment(dead_line).toDate(),
             user: Auth.user,
             profile: (await db.getRepository(User).findOne({where: {id: Auth.user.id}, relations: ['profile']})).profile
@@ -119,7 +145,7 @@ class JobController extends ToApplyJob {
 
          return res.status(201).send({ job: saveJob });
       } catch (error) {
-         console.log(error);
+         return serverError.catchError(res, error);
       }
    }
 
@@ -146,7 +172,7 @@ class JobController extends ToApplyJob {
             .status(201)
             .send({ job: { message: 'Jobs supprimer avec succès!' } });
       } catch (error) {
-         console.log(error);
+         return serverError.catchError(res, error);
       }
    }
 

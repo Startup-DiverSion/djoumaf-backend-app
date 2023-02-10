@@ -9,12 +9,12 @@ export class ToApplyJob {
     @PrimaryGeneratedColumn()
     id: Number
 
-    @ManyToOne(() => Job, job => job.to_apply)
+    @ManyToOne(() => Job, job => job.to_apply, {onDelete: 'CASCADE',})
     job: Job
     @Column()
     job_id: number
 
-    @ManyToOne(() => User, user => user.job)
+    @ManyToOne(() => User, user => user.job, {onDelete: 'CASCADE',})
     user: User
     @Column()
     user_id: number

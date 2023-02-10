@@ -27,16 +27,25 @@ class MediaController {
          const jMediaCover = db.getRepository(MediaCover);
 
          //  Media
-         const newMedia = jMedia.create({
-            url: req.file,
-            profile: profileID,
-         });
-         const saveMedia = await jMedia.save(newMedia);
-         if (!saveMedia) return serverError.notInsertToDatabase(res);
+         if (req.file) {
+            const newMedia = jMedia.create({
+               url: req.file.filename,
+               profile: profileID,
+            });
+            const saveMedia = await jMedia.save(newMedia);
+            if (!saveMedia) return serverError.notInsertToDatabase(res);
+         } else {
+            const newMedia = jMedia.create({
+               url: null,
+               profile: profileID,
+            });
+            const saveMedia = await jMedia.save(newMedia);
+            if (!saveMedia) return serverError.notInsertToDatabase(res);
+         }
 
          //  Media Cover
          const newMediaCover = jMediaCover.create({
-            url: req.file,
+            url: null,
             profile: profileID,
          });
          const saveMediaCover = await jMediaCover.save(newMediaCover);
@@ -63,12 +72,11 @@ class MediaController {
             return serverError.notInsertToDatabase(res);
          }
 
-         console.log(req.files, req.file);
          //
          const updateMedia = jMedia.update(
             { profile: id },
             {
-               url: req.file,
+               url: req.file.filename,
                profile: id,
             }
          );

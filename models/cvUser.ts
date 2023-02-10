@@ -13,10 +13,10 @@ export class UserCv {
     @Column({type: 'integer'})
     cv_default: number
 
-    @ManyToOne(() => ModelCv, (cv) => cv.user_cv)
+    @ManyToOne(() => ModelCv, (cv) => cv.user_cv, {onDelete: 'CASCADE',})
     model_cv: ModelCv
 
-    @ManyToOne(() => User, (user) => user.profile)
+    @ManyToOne(() => User, (user) => user.profile, {onDelete: 'CASCADE',})
     user: User
 
     @CreateDateColumn()

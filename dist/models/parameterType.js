@@ -10,42 +10,39 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TypeParameter = void 0;
-var typeorm_1 = require("typeorm");
-var parameter_1 = require("./parameter");
-var TypeParameter = /** @class */ (function () {
-    function TypeParameter() {
-    }
-    __decorate([
-        (0, typeorm_1.PrimaryGeneratedColumn)(),
-        __metadata("design:type", Number)
-    ], TypeParameter.prototype, "id", void 0);
-    __decorate([
-        (0, typeorm_1.Column)({ nullable: true }),
-        __metadata("design:type", String)
-    ], TypeParameter.prototype, "slug", void 0);
-    __decorate([
-        (0, typeorm_1.Column)(),
-        __metadata("design:type", String)
-    ], TypeParameter.prototype, "title", void 0);
-    __decorate([
-        (0, typeorm_1.OneToMany)(function () { return parameter_1.Parameter; }, function (parameter) { return parameter.type_parameter; }),
-        __metadata("design:type", parameter_1.Parameter)
-    ], TypeParameter.prototype, "parameter", void 0);
-    __decorate([
-        (0, typeorm_1.CreateDateColumn)(),
-        __metadata("design:type", Date)
-    ], TypeParameter.prototype, "created_at", void 0);
-    __decorate([
-        (0, typeorm_1.UpdateDateColumn)(),
-        __metadata("design:type", Date)
-    ], TypeParameter.prototype, "updated_at", void 0);
-    __decorate([
-        (0, typeorm_1.DeleteDateColumn)(),
-        __metadata("design:type", Date)
-    ], TypeParameter.prototype, "deleted_at", void 0);
-    TypeParameter = __decorate([
-        (0, typeorm_1.Entity)("parameter_types")
-    ], TypeParameter);
-    return TypeParameter;
-}());
+const typeorm_1 = require("typeorm");
+const parameter_1 = require("./parameter");
+let TypeParameter = class TypeParameter {
+};
+__decorate([
+    (0, typeorm_1.PrimaryGeneratedColumn)(),
+    __metadata("design:type", Number)
+], TypeParameter.prototype, "id", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], TypeParameter.prototype, "slug", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], TypeParameter.prototype, "title", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => parameter_1.Parameter, (parameter) => parameter.type_parameter, { cascade: true }),
+    __metadata("design:type", parameter_1.Parameter)
+], TypeParameter.prototype, "parameter", void 0);
+__decorate([
+    (0, typeorm_1.CreateDateColumn)(),
+    __metadata("design:type", Date)
+], TypeParameter.prototype, "created_at", void 0);
+__decorate([
+    (0, typeorm_1.UpdateDateColumn)(),
+    __metadata("design:type", Date)
+], TypeParameter.prototype, "updated_at", void 0);
+__decorate([
+    (0, typeorm_1.DeleteDateColumn)(),
+    __metadata("design:type", Date)
+], TypeParameter.prototype, "deleted_at", void 0);
+TypeParameter = __decorate([
+    (0, typeorm_1.Entity)("parameter_types")
+], TypeParameter);
 exports.TypeParameter = TypeParameter;

@@ -8,138 +8,102 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (g && (g = 0, op[0] && (_ = 0)), _) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var index_database_1 = require("../database/index.database");
-var server_error_1 = require("../utils/err/server.error");
-var mediaUserProfile_1 = require("../models/mediaUserProfile");
-var mediaUserProfileCover_1 = require("./../models/mediaUserProfileCover");
-var MediaController = /** @class */ (function () {
-    function MediaController() {
+const index_database_1 = require("../database/index.database");
+const server_error_1 = require("../utils/err/server.error");
+const mediaUserProfile_1 = require("../models/mediaUserProfile");
+const mediaUserProfileCover_1 = require("./../models/mediaUserProfileCover");
+class MediaController {
+    //
+    index(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return res.send({});
+            }
+            catch (error) {
+                console.log(error);
+            }
+        });
     }
     //
-    MediaController.prototype.index = function (req, res) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                try {
-                    return [2 /*return*/, res.send({})];
-                }
-                catch (error) {
-                    console.log(error);
-                }
-                return [2 /*return*/];
-            });
-        });
-    };
+    show(req, res) {
+        return __awaiter(this, void 0, void 0, function* () { });
+    }
     //
-    MediaController.prototype.show = function (req, res) {
-        return __awaiter(this, void 0, void 0, function () { return __generator(this, function (_a) {
-            return [2 /*return*/];
-        }); });
-    };
-    //
-    MediaController.prototype.create = function (req, res, profileID) {
-        return __awaiter(this, void 0, void 0, function () {
-            var jMedia, jMediaCover, newMedia, saveMedia, newMediaCover, saveMediaCover, error_1;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 3, , 4]);
-                        jMedia = index_database_1.db.getRepository(mediaUserProfile_1.Media);
-                        jMediaCover = index_database_1.db.getRepository(mediaUserProfileCover_1.MediaCover);
-                        newMedia = jMedia.create({
-                            url: req.file,
-                            profile: profileID,
-                        });
-                        return [4 /*yield*/, jMedia.save(newMedia)];
-                    case 1:
-                        saveMedia = _a.sent();
-                        if (!saveMedia)
-                            return [2 /*return*/, server_error_1.default.notInsertToDatabase(res)];
-                        newMediaCover = jMediaCover.create({
-                            url: req.file,
-                            profile: profileID,
-                        });
-                        return [4 /*yield*/, jMediaCover.save(newMediaCover)];
-                    case 2:
-                        saveMediaCover = _a.sent();
-                        if (!saveMediaCover)
-                            return [2 /*return*/, server_error_1.default.notInsertToDatabase(res)];
-                        return [3 /*break*/, 4];
-                    case 3:
-                        error_1 = _a.sent();
-                        server_error_1.default.catchError(res, error_1);
-                        return [3 /*break*/, 4];
-                    case 4: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    //
-    MediaController.prototype.update = function (req, res) {
-        return __awaiter(this, void 0, void 0, function () {
-            var _a, id, type, jMedia, updateMedia;
-            return __generator(this, function (_b) {
-                try {
-                    _a = req.body, id = _a.id, type = _a.type;
-                    jMedia = void 0;
-                    if (type === 'profile') {
-                        jMedia = index_database_1.db.getRepository(mediaUserProfile_1.Media);
-                    }
-                    else if (type === 'cover') {
-                        jMedia = index_database_1.db.getRepository(mediaUserProfileCover_1.MediaCover);
-                    }
-                    else {
-                        return [2 /*return*/, server_error_1.default.notInsertToDatabase(res)];
-                    }
-                    console.log(req.files, req.file);
-                    updateMedia = jMedia.update({ profile: id }, {
-                        url: req.file,
-                        profile: id,
+    create(req, res, profileID) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                // Init
+                // Initialize the user profile
+                const jMedia = index_database_1.db.getRepository(mediaUserProfile_1.Media);
+                const jMediaCover = index_database_1.db.getRepository(mediaUserProfileCover_1.MediaCover);
+                //  Media
+                if (req.file) {
+                    const newMedia = jMedia.create({
+                        url: req.file.filename,
+                        profile: profileID,
                     });
-                    if (!updateMedia)
-                        return [2 /*return*/, server_error_1.default.notInsertToDatabase(res)];
-                    return [2 /*return*/, res.send({ media_profile: true })];
+                    const saveMedia = yield jMedia.save(newMedia);
+                    if (!saveMedia)
+                        return server_error_1.default.notInsertToDatabase(res);
                 }
-                catch (error) {
-                    server_error_1.default.catchError(res, error);
+                else {
+                    const newMedia = jMedia.create({
+                        url: null,
+                        profile: profileID,
+                    });
+                    const saveMedia = yield jMedia.save(newMedia);
+                    if (!saveMedia)
+                        return server_error_1.default.notInsertToDatabase(res);
                 }
-                return [2 /*return*/];
-            });
+                //  Media Cover
+                const newMediaCover = jMediaCover.create({
+                    url: null,
+                    profile: profileID,
+                });
+                const saveMediaCover = yield jMediaCover.save(newMediaCover);
+                if (!saveMediaCover)
+                    return server_error_1.default.notInsertToDatabase(res);
+            }
+            catch (error) {
+                server_error_1.default.catchError(res, error);
+            }
         });
-    };
+    }
     //
-    MediaController.prototype.delete = function (req, res) {
-        return __awaiter(this, void 0, void 0, function () { return __generator(this, function (_a) {
-            return [2 /*return*/];
-        }); });
-    };
-    return MediaController;
-}());
+    update(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                // Init
+                const { id, type } = req.body;
+                // Initialize the user profile
+                let jMedia;
+                if (type === 'profile') {
+                    jMedia = index_database_1.db.getRepository(mediaUserProfile_1.Media);
+                }
+                else if (type === 'cover') {
+                    jMedia = index_database_1.db.getRepository(mediaUserProfileCover_1.MediaCover);
+                }
+                else {
+                    return server_error_1.default.notInsertToDatabase(res);
+                }
+                //
+                const updateMedia = jMedia.update({ profile: id }, {
+                    url: req.file.filename,
+                    profile: id,
+                });
+                if (!updateMedia)
+                    return server_error_1.default.notInsertToDatabase(res);
+                return res.send({ media_profile: true });
+            }
+            catch (error) {
+                server_error_1.default.catchError(res, error);
+            }
+        });
+    }
+    //
+    delete(req, res) {
+        return __awaiter(this, void 0, void 0, function* () { });
+    }
+}
 exports.default = new MediaController();

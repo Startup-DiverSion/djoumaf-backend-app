@@ -10,44 +10,41 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Preference = void 0;
-var typeorm_1 = require("typeorm");
-var parameter_1 = require("./parameter");
-var user_1 = require("./user");
-var parameterType_1 = require("./parameterType");
-var Preference = /** @class */ (function () {
-    function Preference() {
-    }
-    __decorate([
-        (0, typeorm_1.PrimaryGeneratedColumn)(),
-        __metadata("design:type", Number)
-    ], Preference.prototype, "id", void 0);
-    __decorate([
-        (0, typeorm_1.ManyToOne)(function () { return parameter_1.Parameter; }, function (type) { return type.preference; }),
-        __metadata("design:type", Array)
-    ], Preference.prototype, "parameter", void 0);
-    __decorate([
-        (0, typeorm_1.ManyToOne)(function () { return parameterType_1.TypeParameter; }, function (type) { return type.parameter; }),
-        __metadata("design:type", parameterType_1.TypeParameter)
-    ], Preference.prototype, "parent", void 0);
-    __decorate([
-        (0, typeorm_1.ManyToOne)(function () { return user_1.User; }, function (type) { return type.preference; }),
-        __metadata("design:type", user_1.User)
-    ], Preference.prototype, "user", void 0);
-    __decorate([
-        (0, typeorm_1.CreateDateColumn)(),
-        __metadata("design:type", Date)
-    ], Preference.prototype, "created_at", void 0);
-    __decorate([
-        (0, typeorm_1.UpdateDateColumn)(),
-        __metadata("design:type", Date)
-    ], Preference.prototype, "updated_at", void 0);
-    __decorate([
-        (0, typeorm_1.DeleteDateColumn)(),
-        __metadata("design:type", Date)
-    ], Preference.prototype, "deleted_at", void 0);
-    Preference = __decorate([
-        (0, typeorm_1.Entity)("user_preferences")
-    ], Preference);
-    return Preference;
-}());
+const typeorm_1 = require("typeorm");
+const parameter_1 = require("./parameter");
+const user_1 = require("./user");
+const parameterType_1 = require("./parameterType");
+let Preference = class Preference {
+};
+__decorate([
+    (0, typeorm_1.PrimaryGeneratedColumn)(),
+    __metadata("design:type", Number)
+], Preference.prototype, "id", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => parameter_1.Parameter, (type) => type.preference, { onDelete: 'CASCADE', }),
+    __metadata("design:type", Array)
+], Preference.prototype, "parameter", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => parameterType_1.TypeParameter, (type) => type.parameter, { onDelete: 'CASCADE', }),
+    __metadata("design:type", parameterType_1.TypeParameter)
+], Preference.prototype, "parent", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => user_1.User, (type) => type.preference, { onDelete: 'CASCADE', }),
+    __metadata("design:type", user_1.User)
+], Preference.prototype, "user", void 0);
+__decorate([
+    (0, typeorm_1.CreateDateColumn)(),
+    __metadata("design:type", Date)
+], Preference.prototype, "created_at", void 0);
+__decorate([
+    (0, typeorm_1.UpdateDateColumn)(),
+    __metadata("design:type", Date)
+], Preference.prototype, "updated_at", void 0);
+__decorate([
+    (0, typeorm_1.DeleteDateColumn)(),
+    __metadata("design:type", Date)
+], Preference.prototype, "deleted_at", void 0);
+Preference = __decorate([
+    (0, typeorm_1.Entity)("user_preferences")
+], Preference);
 exports.Preference = Preference;

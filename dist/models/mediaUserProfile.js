@@ -10,38 +10,35 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Media = void 0;
-var typeorm_1 = require("typeorm");
-var userProfile_1 = require("./userProfile");
-var Media = /** @class */ (function () {
-    function Media() {
-    }
-    __decorate([
-        (0, typeorm_1.PrimaryGeneratedColumn)(),
-        __metadata("design:type", Number)
-    ], Media.prototype, "id", void 0);
-    __decorate([
-        (0, typeorm_1.Column)({ type: 'json', nullable: true }),
-        __metadata("design:type", Object)
-    ], Media.prototype, "url", void 0);
-    __decorate([
-        (0, typeorm_1.ManyToOne)(function () { return userProfile_1.Profile; }, function (profile) { return profile.media_profile; }, { onDelete: "CASCADE" }),
-        __metadata("design:type", userProfile_1.Profile)
-    ], Media.prototype, "profile", void 0);
-    __decorate([
-        (0, typeorm_1.CreateDateColumn)(),
-        __metadata("design:type", Date)
-    ], Media.prototype, "created_at", void 0);
-    __decorate([
-        (0, typeorm_1.UpdateDateColumn)(),
-        __metadata("design:type", Date)
-    ], Media.prototype, "updated_at", void 0);
-    __decorate([
-        (0, typeorm_1.DeleteDateColumn)(),
-        __metadata("design:type", Date)
-    ], Media.prototype, "deleted_at", void 0);
-    Media = __decorate([
-        (0, typeorm_1.Entity)("media_user_profile")
-    ], Media);
-    return Media;
-}());
+const typeorm_1 = require("typeorm");
+const userProfile_1 = require("./userProfile");
+let Media = class Media {
+};
+__decorate([
+    (0, typeorm_1.PrimaryGeneratedColumn)(),
+    __metadata("design:type", Number)
+], Media.prototype, "id", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', nullable: true }),
+    __metadata("design:type", String)
+], Media.prototype, "url", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => userProfile_1.Profile, (profile) => profile.media_profile, { onDelete: "CASCADE" }),
+    __metadata("design:type", userProfile_1.Profile)
+], Media.prototype, "profile", void 0);
+__decorate([
+    (0, typeorm_1.CreateDateColumn)(),
+    __metadata("design:type", Date)
+], Media.prototype, "created_at", void 0);
+__decorate([
+    (0, typeorm_1.UpdateDateColumn)(),
+    __metadata("design:type", Date)
+], Media.prototype, "updated_at", void 0);
+__decorate([
+    (0, typeorm_1.DeleteDateColumn)(),
+    __metadata("design:type", Date)
+], Media.prototype, "deleted_at", void 0);
+Media = __decorate([
+    (0, typeorm_1.Entity)("media_user_profile")
+], Media);
 exports.Media = Media;

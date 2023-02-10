@@ -26,10 +26,10 @@ export class TalkMail {
    @Column()
    from: string;
 
-   @ManyToOne((type) => User, (user) => user.chats)
+   @ManyToOne((type) => User, (user) => user.chats, {onDelete: 'CASCADE',})
    user: User;
 
-   @ManyToOne((type) => Chat, (chat) => chat.message)
+   @ManyToOne((type) => Chat, (chat) => chat.message, {onDelete: 'CASCADE',})
    chat: Chat;
 
    @Column()

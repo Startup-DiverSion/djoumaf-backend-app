@@ -13,13 +13,13 @@ export class Parameter {
     @Column({nullable: false})
     title: string
 
-    @ManyToOne(() => TypeParameter, (type) => type.parameter)
+    @ManyToOne(() => TypeParameter, (type) => type.parameter, {onDelete: 'CASCADE',})
     type_parameter: TypeParameter
 
-    @OneToMany(() => Preference, (preference) => preference.parameter)
+    @OneToMany(() => Preference, (preference) => preference.parameter, {cascade: true})
     preference: Preference
 
-    @OneToMany(() => Job, (job) => job.field_activity)
+    @OneToMany(() => Job, (job) => job.field_activity, {cascade: true})
     job: Job
 
     @CreateDateColumn()

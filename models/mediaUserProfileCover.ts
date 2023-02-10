@@ -9,8 +9,8 @@ export class MediaCover {
     @PrimaryGeneratedColumn()
     id: Number
 
-    @Column({type: 'json', nullable: true})
-    url: object
+    @Column({nullable: true})
+    url: string
 
     @ManyToOne(() => Profile, (profile) => profile.media_profile_cover, { onDelete: "CASCADE" })
     profile: Profile

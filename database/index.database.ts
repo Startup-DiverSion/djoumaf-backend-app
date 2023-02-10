@@ -18,23 +18,18 @@ import { CourseCV } from '../models/cvCourse';
 import { MediaCover } from '../models/mediaUserProfileCover';
 import { TalkMail } from '../models/talkMail';
 import { Chat } from '../models/chat';
+import { env } from '../config/env.config';
+import { Follow } from '../models/userFollow';
 
 export const db = new DataSource({
    type: 'mysql',
+   host: env.HOST,
+   username: env.USERNAME,
+   password: env.PASSWORD,
+   database: env.DATABASE,
+   charset: env.CHARSET,
+   port: env.PORT_DB,
 
-   // Productions
-   // host: "localhost",
-   // username: "djoumaf",
-   // password: "djoumaf-nray-20",
-   // database: "nxs_djoumaf",
-
-   // Developpement
-   host: 'localhost',
-   username: 'root',
-   password: '',
-   database: 'nxs_djoumaf',
-
-   port: 3306,
    entities: [
       User,
       Job,
@@ -53,12 +48,12 @@ export const db = new DataSource({
       CourseCV,
       SkillCv,
       TalkMail,
-      Chat
+      Chat,
+      Follow
    ],
    migrations: ['migration/*.js'],
    logging: false,
    synchronize: true,
-   connectTimeout: 90000,
 });
 
 export const startDb = () => {

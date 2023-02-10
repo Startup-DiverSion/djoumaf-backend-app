@@ -10,38 +10,35 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MediaCv = void 0;
-var typeorm_1 = require("typeorm");
-var cvModel_1 = require("./cvModel");
-var MediaCv = /** @class */ (function () {
-    function MediaCv() {
-    }
-    __decorate([
-        (0, typeorm_1.PrimaryGeneratedColumn)(),
-        __metadata("design:type", Number)
-    ], MediaCv.prototype, "id", void 0);
-    __decorate([
-        (0, typeorm_1.Column)({ type: 'json' }),
-        __metadata("design:type", Object)
-    ], MediaCv.prototype, "url", void 0);
-    __decorate([
-        (0, typeorm_1.OneToMany)(function () { return cvModel_1.ModelCv; }, function (cv) { return cv.picture; }, { onDelete: "CASCADE" }),
-        __metadata("design:type", cvModel_1.ModelCv)
-    ], MediaCv.prototype, "model_cv", void 0);
-    __decorate([
-        (0, typeorm_1.CreateDateColumn)(),
-        __metadata("design:type", Date)
-    ], MediaCv.prototype, "created_at", void 0);
-    __decorate([
-        (0, typeorm_1.UpdateDateColumn)(),
-        __metadata("design:type", Date)
-    ], MediaCv.prototype, "updated_at", void 0);
-    __decorate([
-        (0, typeorm_1.DeleteDateColumn)(),
-        __metadata("design:type", Date)
-    ], MediaCv.prototype, "deleted_at", void 0);
-    MediaCv = __decorate([
-        (0, typeorm_1.Entity)("media_user_profile_cv")
-    ], MediaCv);
-    return MediaCv;
-}());
+const typeorm_1 = require("typeorm");
+const cvModel_1 = require("./cvModel");
+let MediaCv = class MediaCv {
+};
+__decorate([
+    (0, typeorm_1.PrimaryGeneratedColumn)(),
+    __metadata("design:type", Number)
+], MediaCv.prototype, "id", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], MediaCv.prototype, "url", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => cvModel_1.ModelCv, (cv) => cv.picture, { onDelete: "CASCADE" }),
+    __metadata("design:type", cvModel_1.ModelCv)
+], MediaCv.prototype, "model_cv", void 0);
+__decorate([
+    (0, typeorm_1.CreateDateColumn)(),
+    __metadata("design:type", Date)
+], MediaCv.prototype, "created_at", void 0);
+__decorate([
+    (0, typeorm_1.UpdateDateColumn)(),
+    __metadata("design:type", Date)
+], MediaCv.prototype, "updated_at", void 0);
+__decorate([
+    (0, typeorm_1.DeleteDateColumn)(),
+    __metadata("design:type", Date)
+], MediaCv.prototype, "deleted_at", void 0);
+MediaCv = __decorate([
+    (0, typeorm_1.Entity)("media_user_profile_cv")
+], MediaCv);
 exports.MediaCv = MediaCv;

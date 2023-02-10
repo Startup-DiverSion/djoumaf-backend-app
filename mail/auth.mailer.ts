@@ -3,6 +3,7 @@ import * as ejs from 'ejs';
 import * as path from 'path';
 import { mailConfiguration } from '../config/mailer.config';
 import { Code } from 'typeorm';
+import { env } from '../config/env.config';
 
 class AuthMailer {
    constructor() {}
@@ -15,9 +16,9 @@ class AuthMailer {
       try {
          const data = {
             firstName: usernane,
-            confirm_link: process.env.HOST_CLIENT + `/auth/sign-validate-account?token=${token}`,
+            confirm_link: env.HOST_CLIENT + `/auth/sign-validate-account?token=${token}`,
          };
-         console.log(process.env.HOST_CLIENT)
+        
          ejs.renderFile(
             path.join(__dirname, '../templates/auth/account.view.ejs'),
             data

@@ -10,72 +10,69 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ExperienceCv = void 0;
-var typeorm_1 = require("typeorm");
-var parameter_1 = require("./parameter");
-var user_1 = require("./user");
-var cvSkill_1 = require("./cvSkill");
-var ExperienceCv = /** @class */ (function () {
-    function ExperienceCv() {
-    }
-    __decorate([
-        (0, typeorm_1.PrimaryGeneratedColumn)(),
-        __metadata("design:type", Number)
-    ], ExperienceCv.prototype, "id", void 0);
-    __decorate([
-        (0, typeorm_1.Column)(),
-        __metadata("design:type", String)
-    ], ExperienceCv.prototype, "slug", void 0);
-    __decorate([
-        (0, typeorm_1.Column)(),
-        __metadata("design:type", String)
-    ], ExperienceCv.prototype, "company_name", void 0);
-    __decorate([
-        (0, typeorm_1.ManyToOne)(function () { return parameter_1.Parameter; }, function (parameter) { return parameter.type_parameter; }),
-        __metadata("design:type", parameter_1.Parameter)
-    ], ExperienceCv.prototype, "experience", void 0);
-    __decorate([
-        (0, typeorm_1.Column)(),
-        __metadata("design:type", String)
-    ], ExperienceCv.prototype, "date_start", void 0);
-    __decorate([
-        (0, typeorm_1.Column)({ nullable: true }),
-        __metadata("design:type", String)
-    ], ExperienceCv.prototype, "date_finish", void 0);
-    __decorate([
-        (0, typeorm_1.Column)({ nullable: true, type: 'boolean' }),
-        __metadata("design:type", Boolean)
-    ], ExperienceCv.prototype, "currently_working", void 0);
-    __decorate([
-        (0, typeorm_1.Column)(),
-        __metadata("design:type", String)
-    ], ExperienceCv.prototype, "workplace", void 0);
-    __decorate([
-        (0, typeorm_1.Column)({ type: 'longtext' }),
-        __metadata("design:type", String)
-    ], ExperienceCv.prototype, "description", void 0);
-    __decorate([
-        (0, typeorm_1.ManyToOne)(function () { return cvSkill_1.SkillCv; }, function (sk) { return sk.parameter; }),
-        __metadata("design:type", Array)
-    ], ExperienceCv.prototype, "skill", void 0);
-    __decorate([
-        (0, typeorm_1.ManyToOne)(function () { return user_1.User; }, function (user) { return user.profile; }, { cascade: true }),
-        __metadata("design:type", user_1.User)
-    ], ExperienceCv.prototype, "user", void 0);
-    __decorate([
-        (0, typeorm_1.CreateDateColumn)(),
-        __metadata("design:type", Date)
-    ], ExperienceCv.prototype, "created_at", void 0);
-    __decorate([
-        (0, typeorm_1.UpdateDateColumn)(),
-        __metadata("design:type", Date)
-    ], ExperienceCv.prototype, "updated_at", void 0);
-    __decorate([
-        (0, typeorm_1.DeleteDateColumn)(),
-        __metadata("design:type", Date)
-    ], ExperienceCv.prototype, "deleted_at", void 0);
-    ExperienceCv = __decorate([
-        (0, typeorm_1.Entity)("cv_experiences")
-    ], ExperienceCv);
-    return ExperienceCv;
-}());
+const typeorm_1 = require("typeorm");
+const parameter_1 = require("./parameter");
+const user_1 = require("./user");
+const cvSkill_1 = require("./cvSkill");
+let ExperienceCv = class ExperienceCv {
+};
+__decorate([
+    (0, typeorm_1.PrimaryGeneratedColumn)(),
+    __metadata("design:type", Number)
+], ExperienceCv.prototype, "id", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], ExperienceCv.prototype, "slug", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], ExperienceCv.prototype, "company_name", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => parameter_1.Parameter, (parameter) => parameter.type_parameter, { onDelete: 'CASCADE', }),
+    __metadata("design:type", parameter_1.Parameter)
+], ExperienceCv.prototype, "experience", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], ExperienceCv.prototype, "date_start", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], ExperienceCv.prototype, "date_finish", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true, type: 'boolean' }),
+    __metadata("design:type", Boolean)
+], ExperienceCv.prototype, "currently_working", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], ExperienceCv.prototype, "workplace", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'longtext' }),
+    __metadata("design:type", String)
+], ExperienceCv.prototype, "description", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => cvSkill_1.SkillCv, (sk) => sk.parameter, { onDelete: 'CASCADE', }),
+    __metadata("design:type", Array)
+], ExperienceCv.prototype, "skill", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => user_1.User, (user) => user.profile, { onDelete: 'CASCADE', }),
+    __metadata("design:type", user_1.User)
+], ExperienceCv.prototype, "user", void 0);
+__decorate([
+    (0, typeorm_1.CreateDateColumn)(),
+    __metadata("design:type", Date)
+], ExperienceCv.prototype, "created_at", void 0);
+__decorate([
+    (0, typeorm_1.UpdateDateColumn)(),
+    __metadata("design:type", Date)
+], ExperienceCv.prototype, "updated_at", void 0);
+__decorate([
+    (0, typeorm_1.DeleteDateColumn)(),
+    __metadata("design:type", Date)
+], ExperienceCv.prototype, "deleted_at", void 0);
+ExperienceCv = __decorate([
+    (0, typeorm_1.Entity)("cv_experiences")
+], ExperienceCv);
 exports.ExperienceCv = ExperienceCv;

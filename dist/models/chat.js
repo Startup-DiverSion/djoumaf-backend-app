@@ -10,43 +10,40 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Chat = void 0;
-var typeorm_1 = require("typeorm");
-var user_1 = require("./user");
-var talkMail_1 = require("./talkMail");
-var Chat = /** @class */ (function () {
-    function Chat() {
-    }
-    __decorate([
-        (0, typeorm_1.PrimaryGeneratedColumn)(),
-        __metadata("design:type", Number)
-    ], Chat.prototype, "id", void 0);
-    __decorate([
-        (0, typeorm_1.Column)(),
-        __metadata("design:type", String)
-    ], Chat.prototype, "name", void 0);
-    __decorate([
-        (0, typeorm_1.ManyToMany)(function (type) { return user_1.User; }, function (user) { return user.chats; }),
-        __metadata("design:type", Array)
-    ], Chat.prototype, "users", void 0);
-    __decorate([
-        (0, typeorm_1.OneToMany)(function () { return talkMail_1.TalkMail; }, function (message) { return message.chat; }),
-        __metadata("design:type", talkMail_1.TalkMail)
-    ], Chat.prototype, "message", void 0);
-    __decorate([
-        (0, typeorm_1.CreateDateColumn)(),
-        __metadata("design:type", Date)
-    ], Chat.prototype, "created_at", void 0);
-    __decorate([
-        (0, typeorm_1.UpdateDateColumn)(),
-        __metadata("design:type", Date)
-    ], Chat.prototype, "updated_at", void 0);
-    __decorate([
-        (0, typeorm_1.DeleteDateColumn)(),
-        __metadata("design:type", Date)
-    ], Chat.prototype, "deleted_at", void 0);
-    Chat = __decorate([
-        (0, typeorm_1.Entity)()
-    ], Chat);
-    return Chat;
-}());
+const typeorm_1 = require("typeorm");
+const user_1 = require("./user");
+const talkMail_1 = require("./talkMail");
+let Chat = class Chat {
+};
+__decorate([
+    (0, typeorm_1.PrimaryGeneratedColumn)(),
+    __metadata("design:type", Number)
+], Chat.prototype, "id", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], Chat.prototype, "name", void 0);
+__decorate([
+    (0, typeorm_1.ManyToMany)(type => user_1.User, user => user.chats, { onDelete: 'CASCADE', }),
+    __metadata("design:type", Array)
+], Chat.prototype, "users", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => talkMail_1.TalkMail, (message) => message.chat, { cascade: true }),
+    __metadata("design:type", talkMail_1.TalkMail)
+], Chat.prototype, "message", void 0);
+__decorate([
+    (0, typeorm_1.CreateDateColumn)(),
+    __metadata("design:type", Date)
+], Chat.prototype, "created_at", void 0);
+__decorate([
+    (0, typeorm_1.UpdateDateColumn)(),
+    __metadata("design:type", Date)
+], Chat.prototype, "updated_at", void 0);
+__decorate([
+    (0, typeorm_1.DeleteDateColumn)(),
+    __metadata("design:type", Date)
+], Chat.prototype, "deleted_at", void 0);
+Chat = __decorate([
+    (0, typeorm_1.Entity)()
+], Chat);
 exports.Chat = Chat;

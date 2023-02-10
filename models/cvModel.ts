@@ -18,7 +18,7 @@ export class ModelCv {
     @ManyToOne(() => MediaCv, (cv) => cv.model_cv, { onDelete: "CASCADE" })
     picture: MediaCv
 
-    @OneToMany(() => UserCv, (cv) => cv.model_cv, { onDelete: "CASCADE" })
+    @OneToMany(() => UserCv, (cv) => cv.model_cv, { cascade: true })
     user_cv: UserCv
 
     @CreateDateColumn()

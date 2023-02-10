@@ -14,20 +14,23 @@ export class Job {
     @Column()
     title: string
 
-    @ManyToOne(() => Parameter, (type) => type.job)
+    @ManyToOne(() => Parameter, (type) => type.job, {onDelete: 'CASCADE',})
     field_activity: Parameter
 
-    @ManyToOne(() => Parameter, (type) => type.job)
+    @ManyToOne(() => Parameter, (type) => type.job, {onDelete: 'CASCADE',})
     work_place: Parameter
 
-    @ManyToOne(() => Parameter, (type) => type.job)
+    @ManyToOne(() => Parameter, (type) => type.job, {onDelete: 'CASCADE',})
     contract_type: Parameter
 
     @Column()
     slug: string
 
-    @Column({type: 'json'})
-    localization: JSON
+    @Column()
+    country: string
+
+    @Column()
+    city: string
 
     @Column()
     dead_line: Date
@@ -35,13 +38,13 @@ export class Job {
     @Column({type: 'longtext'})
     description: any
 
-    @ManyToOne(() => User, (user) => user.job)
+    @ManyToOne(() => User, (user) => user.job, {onDelete: 'CASCADE',})
     user: Profile
 
-    @ManyToOne(() => Profile, (profile) => profile.job)
+    @ManyToOne(() => Profile, (profile) => profile.job, {onDelete: 'CASCADE',})
     profile: Profile
 
-    @OneToMany(() => ToApplyJob, apply => apply.job)
+    @OneToMany(() => ToApplyJob, apply => apply.job, {cascade: true})
     to_apply: ToApplyJob
 
     @CreateDateColumn()

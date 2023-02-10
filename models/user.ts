@@ -20,6 +20,7 @@ import { Role } from './userRole';
 import { ToApplyJob } from './jobToApply';
 import { TalkMail } from './talkMail';
 import { Chat } from './chat';
+import { Follow } from './userFollow';
 
 @Entity('users')
 export class User {
@@ -44,37 +45,46 @@ export class User {
    @Column()
    token: string;
 
-   @OneToOne(() => Profile, (profile) => profile.user)
+   @OneToOne(() => Profile, (profile) => profile.user, { eager: true, cascade: true, onDelete: 'CASCADE' })
    @JoinColumn()
    profile: Profile;
 
-   @Column({ type: 'json', nullable: true })
-   signin_place: object;
+   @Column({ type: 'longtext', nullable: true })
+   signin_place: any;
 
-   @Column({ type: 'json', nullable: true })
-   signup_place: object;
+   @Column({ type: 'longtext', nullable: true })
+   signup_place: any;
 
-   @Column({ type: 'json', nullable: true })
-   device: object;
+   @Column({ type: 'longtext', nullable: true })
+   device: any;
+   
 
-   @ManyToOne(() => Role, (role) => role.user)
+   @ManyToOne(() => Role, (role) => role.user, {onDelete: 'CASCADE',})
    role: Role;
 
-   @OneToMany(() => Preference, (preference) => preference.user)
+   @OneToMany(() => Preference, (preference) => preference.user, {cascade: true})
    preference: Preference;
+   
 
-   @Column({ type: 'json', nullable: true })
-   rest_password_code: object;
+   @Column({  nullable: true })
+   rest_password_code: string;
 
-   @OneToMany(() => Job, (job) => job.user)
+   @Column({  nullable: true })
+   verify_code_expire: string;
+
+   @OneToMany(() => Job, (job) => job.user, {cascade: true})
    job: Job;
 
-   @OneToMany(() => TalkMail, (message) => message.user)
+   @OneToMany(() => TalkMail, (message) => message.user, {cascade: true})
    message: TalkMail;
 
    @ManyToMany(type => Chat, chat => chat.users)
   @JoinTable({name: 'chat_into_users'})
   chats: Chat[];
+
+  @ManyToMany(type => Follow, follow => follow.users)
+  @JoinTable({name: 'follow_into_users'})
+  follows: Follow[];
 
    @CreateDateColumn()
    created_at: Date;

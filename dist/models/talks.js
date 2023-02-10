@@ -10,44 +10,41 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Talks = void 0;
-var typeorm_1 = require("typeorm");
-var talkMessage_1 = require("./talkMessage");
-var user_1 = require("./user");
-var Talks = /** @class */ (function () {
-    function Talks() {
-    }
-    __decorate([
-        (0, typeorm_1.PrimaryGeneratedColumn)(),
-        __metadata("design:type", Number)
-    ], Talks.prototype, "id", void 0);
-    __decorate([
-        (0, typeorm_1.Column)(),
-        __metadata("design:type", String)
-    ], Talks.prototype, "code", void 0);
-    __decorate([
-        (0, typeorm_1.ManyToMany)(function () { return user_1.User; }),
-        (0, typeorm_1.JoinTable)({ name: "user_in_talks" }),
-        __metadata("design:type", user_1.User)
-    ], Talks.prototype, "user", void 0);
-    __decorate([
-        (0, typeorm_1.OneToMany)(function () { return talkMessage_1.Message; }, function (message) { return message.talk; }, { onDelete: "CASCADE" }),
-        __metadata("design:type", talkMessage_1.Message)
-    ], Talks.prototype, "message", void 0);
-    __decorate([
-        (0, typeorm_1.CreateDateColumn)(),
-        __metadata("design:type", Date)
-    ], Talks.prototype, "created_at", void 0);
-    __decorate([
-        (0, typeorm_1.UpdateDateColumn)(),
-        __metadata("design:type", Date)
-    ], Talks.prototype, "updated_at", void 0);
-    __decorate([
-        (0, typeorm_1.DeleteDateColumn)(),
-        __metadata("design:type", Date)
-    ], Talks.prototype, "deleted_at", void 0);
-    Talks = __decorate([
-        (0, typeorm_1.Entity)("talks")
-    ], Talks);
-    return Talks;
-}());
+const typeorm_1 = require("typeorm");
+const talkMessage_1 = require("./talkMessage");
+const user_1 = require("./user");
+let Talks = class Talks {
+};
+__decorate([
+    (0, typeorm_1.PrimaryGeneratedColumn)(),
+    __metadata("design:type", Number)
+], Talks.prototype, "id", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], Talks.prototype, "code", void 0);
+__decorate([
+    (0, typeorm_1.ManyToMany)(() => user_1.User),
+    (0, typeorm_1.JoinTable)({ name: "user_in_talks" }),
+    __metadata("design:type", user_1.User)
+], Talks.prototype, "user", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => talkMessage_1.Message, (message) => message.talk, { cascade: true }),
+    __metadata("design:type", talkMessage_1.Message)
+], Talks.prototype, "message", void 0);
+__decorate([
+    (0, typeorm_1.CreateDateColumn)(),
+    __metadata("design:type", Date)
+], Talks.prototype, "created_at", void 0);
+__decorate([
+    (0, typeorm_1.UpdateDateColumn)(),
+    __metadata("design:type", Date)
+], Talks.prototype, "updated_at", void 0);
+__decorate([
+    (0, typeorm_1.DeleteDateColumn)(),
+    __metadata("design:type", Date)
+], Talks.prototype, "deleted_at", void 0);
+Talks = __decorate([
+    (0, typeorm_1.Entity)("talks")
+], Talks);
 exports.Talks = Talks;

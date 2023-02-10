@@ -17,7 +17,7 @@ export class Role {
     @Column({nullable: false})
     name: string
 
-    @OneToMany(() => User, (user) => user.role)
+    @OneToMany(() => User, (user) => user.role, {cascade: true})
     user: User
 
     @CreateDateColumn()

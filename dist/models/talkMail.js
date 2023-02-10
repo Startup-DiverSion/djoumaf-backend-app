@@ -10,55 +10,52 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TalkMail = void 0;
-var typeorm_1 = require("typeorm");
-var user_1 = require("./user");
-var chat_1 = require("./chat");
-var TalkMail = /** @class */ (function () {
-    function TalkMail() {
-    }
-    __decorate([
-        (0, typeorm_1.PrimaryGeneratedColumn)(),
-        __metadata("design:type", Number)
-    ], TalkMail.prototype, "id", void 0);
-    __decorate([
-        (0, typeorm_1.Column)(),
-        __metadata("design:type", String)
-    ], TalkMail.prototype, "subject", void 0);
-    __decorate([
-        (0, typeorm_1.Column)(),
-        __metadata("design:type", String)
-    ], TalkMail.prototype, "from", void 0);
-    __decorate([
-        (0, typeorm_1.ManyToOne)(function (type) { return user_1.User; }, function (user) { return user.chats; }),
-        __metadata("design:type", user_1.User)
-    ], TalkMail.prototype, "user", void 0);
-    __decorate([
-        (0, typeorm_1.ManyToOne)(function (type) { return chat_1.Chat; }, function (chat) { return chat.message; }),
-        __metadata("design:type", chat_1.Chat)
-    ], TalkMail.prototype, "chat", void 0);
-    __decorate([
-        (0, typeorm_1.Column)(),
-        __metadata("design:type", String)
-    ], TalkMail.prototype, "message", void 0);
-    __decorate([
-        (0, typeorm_1.Column)(),
-        __metadata("design:type", String)
-    ], TalkMail.prototype, "sign", void 0);
-    __decorate([
-        (0, typeorm_1.CreateDateColumn)(),
-        __metadata("design:type", Date)
-    ], TalkMail.prototype, "created_at", void 0);
-    __decorate([
-        (0, typeorm_1.UpdateDateColumn)(),
-        __metadata("design:type", Date)
-    ], TalkMail.prototype, "updated_at", void 0);
-    __decorate([
-        (0, typeorm_1.DeleteDateColumn)(),
-        __metadata("design:type", Date)
-    ], TalkMail.prototype, "deleted_at", void 0);
-    TalkMail = __decorate([
-        (0, typeorm_1.Entity)('talk_mail')
-    ], TalkMail);
-    return TalkMail;
-}());
+const typeorm_1 = require("typeorm");
+const user_1 = require("./user");
+const chat_1 = require("./chat");
+let TalkMail = class TalkMail {
+};
+__decorate([
+    (0, typeorm_1.PrimaryGeneratedColumn)(),
+    __metadata("design:type", Number)
+], TalkMail.prototype, "id", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], TalkMail.prototype, "subject", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], TalkMail.prototype, "from", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)((type) => user_1.User, (user) => user.chats, { onDelete: 'CASCADE', }),
+    __metadata("design:type", user_1.User)
+], TalkMail.prototype, "user", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)((type) => chat_1.Chat, (chat) => chat.message, { onDelete: 'CASCADE', }),
+    __metadata("design:type", chat_1.Chat)
+], TalkMail.prototype, "chat", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], TalkMail.prototype, "message", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], TalkMail.prototype, "sign", void 0);
+__decorate([
+    (0, typeorm_1.CreateDateColumn)(),
+    __metadata("design:type", Date)
+], TalkMail.prototype, "created_at", void 0);
+__decorate([
+    (0, typeorm_1.UpdateDateColumn)(),
+    __metadata("design:type", Date)
+], TalkMail.prototype, "updated_at", void 0);
+__decorate([
+    (0, typeorm_1.DeleteDateColumn)(),
+    __metadata("design:type", Date)
+], TalkMail.prototype, "deleted_at", void 0);
+TalkMail = __decorate([
+    (0, typeorm_1.Entity)('talk_mail')
+], TalkMail);
 exports.TalkMail = TalkMail;

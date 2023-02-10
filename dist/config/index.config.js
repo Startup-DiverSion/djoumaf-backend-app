@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var AppConfig = /** @class */ (function () {
-    function AppConfig() {
+class AppConfig {
+    constructor() {
     }
-    AppConfig.prototype.database = function () {
+    database() {
         return {
             type: "mysql",
             host: "localhost",
@@ -15,10 +15,9 @@ var AppConfig = /** @class */ (function () {
             logging: true,
             synchronize: true,
         };
-    };
-    AppConfig.prototype.mail = function () {
+    }
+    mail() {
         return {};
-    };
-    return AppConfig;
-}());
+    }
+}
 exports.default = new AppConfig();

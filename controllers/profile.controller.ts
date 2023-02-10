@@ -12,12 +12,36 @@ import { TypeParameter } from '../models/parameterType';
 import MediaService from '../services/media.services';
 import MediaController from './media.controller';
 import { MediaCover } from '../models/mediaUserProfileCover';
+import { Not, IsNull } from 'typeorm';
 
 class ProfileController {
    constructor() {}
 
    //
-   public async index(req: Request, res: Response) {}
+   public async index(req: Request, res: Response) {
+      try {
+         const query: any = req.query;
+
+         const JProfile = db.getRepository(Profile);
+         let getAllProfile: any = [];
+         const relations = ['user', 'media_profile', 'media_profile_cover']
+
+         //    Limit
+         console.log(query.limit);
+         if (query.limit && query.limit >= 0) {
+            const limit = parseInt(query.limit);
+            getAllProfile = await JProfile.find({ take: query.limit });
+            return res.send({ parameter: getAllProfile, relations });
+         }
+
+         getAllProfile = await JProfile.find({ where: { 
+            slug: Not(IsNull())
+          } , relations});
+         return res.send({ profiles: getAllProfile });
+      } catch (error) {
+         serverError.catchError(res, error);
+      }
+   }
 
    //
    public async show(req: Request, res: Response) {
@@ -46,7 +70,6 @@ class ProfileController {
       try {
          // Init
          const jProfile = db.getRepository(Profile);
-         
 
          // Get the informations entry request
          const { slug } = req.body;
@@ -54,11 +77,14 @@ class ProfileController {
          // Get job data based on id
          const getProfile = await jProfile.findOne({
             where: { slug: slug },
-            relations: { user: true, media_profile: true, media_profile_cover: true },
+            relations: {
+               user: true,
+               media_profile: true,
+               media_profile_cover: true,
+            },
          });
          if (!getProfile) return serverError.noDataMatches(res);
-         console.log(getProfile)
-
+         console.log(getProfile);
 
          // Return Data
          return res.status(201).send({ profile: getProfile });
@@ -110,22 +136,21 @@ class ProfileController {
          const jProfile = db.getRepository(Profile);
          const jMedia = db.getRepository(Media);
          const jPreference = db.getRepository(Preference);
-         const jParametre =db.getRepository(Parameter);
+         const jParametre = db.getRepository(Parameter);
 
          const full_name = last_name + ' ' + first_name;
          let slugExist: any;
          let slug: string;
 
-     
-
          do {
-
             // Defined the letter associated
-            const letter = 'd j o u m a f'.split(' ')
-            const letterRamdom = Math.floor(Math.random() * letter.length)
+            const letter = 'd j o u m a f'.split(' ');
+            const letterRamdom = Math.floor(Math.random() * letter.length);
 
             // Defined the slug of profile
-            slug =  `${slugify(full_name, '_')}_${Math.floor(Math.random() * 10000)}${letter[letterRamdom]}`.toLowerCase();
+            slug = `${slugify(full_name, '_')}_${Math.floor(
+               Math.random() * 10000
+            )}${letter[letterRamdom]}`.toLowerCase();
 
             // Get profile
             slugExist = await db
@@ -138,8 +163,6 @@ class ProfileController {
                });
          } while (slugExist);
 
-         
-        
          // Add image to profile
          await MediaController.create(req, res, id);
          // if (req.file) {
@@ -151,29 +174,29 @@ class ProfileController {
          //    const saveMedia = await jMedia.save(newMedia);
          //    if (!saveMedia) return serverError.notInsertToDatabase(res);
          // }
-        
+
          // Add preference of profile
-         preferenceID =  JSON.parse(preferenceID)?.pref
+         preferenceID = JSON.parse(preferenceID)?.pref;
          for (let i = 0; i < preferenceID.length; i++) {
             const el = preferenceID[i];
-         
 
-            const parameter = await jParametre.findOne({where: {id: el}, relations: {type_parameter: true}})
+            const parameter = await jParametre.findOne({
+               where: { id: el },
+               relations: { type_parameter: true },
+            });
 
             const newPreference = jPreference.create({
                parameter: el,
                user: userID,
-               parent: parameter.type_parameter
+               parent: parameter.type_parameter,
             });
             const savePreference = await jPreference.save(newPreference);
             if (!savePreference) return serverError.notInsertToDatabase(res);
 
-            if(savePreference.parameter === type_user){
-               type_user = savePreference
+            if (savePreference.parameter === type_user) {
+               type_user = savePreference;
             }
          }
-
-       
 
          let updateProfile = jProfile.update(
             { id: id },
@@ -191,15 +214,14 @@ class ProfileController {
          );
          if (!updateProfile) return serverError.notInsertToDatabase(res);
 
+         const xUser = await db
+            .getRepository(User)
+            .findOne({ where: { id }, relations: { profile: true } });
+         if (!xUser) return serverError.noDataMatches(res);
 
-         const xProfile = await db.getRepository(Profile).findOne({where: {id}});
-         if (!updateProfile) return serverError.noDataMatches(res);
-          
-
-
-         return res.send({ profile: xProfile});
+         return res.send({ user: xUser });
       } catch (error) {
-         console.log(error)
+         console.log(error);
          serverError.catchError(res, error);
       }
    }

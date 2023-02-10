@@ -29,9 +29,9 @@ export class Profile {
     bio: string
 
     @Column({ nullable: true, type: "longtext"})
-    description: string
+    description: any
 
-    @ManyToOne(() => Parameter, (pref) => pref.preference)
+    @ManyToOne(() => Parameter, (pref) => pref.preference, {onDelete: 'CASCADE',})
     type_user: Parameter
     
     @Column({ nullable: true})
@@ -46,17 +46,13 @@ export class Profile {
     @OneToOne(() => User, (user) => user.profile) // specify inverse side as a second parameter
     user: User
 
-    @ManyToMany(() => User) 
-    @JoinTable({name: "follow"})
-    follow: User
-
-    @OneToMany(() => Job, (job) => job.profile)
+    @OneToMany(() => Job, (job) => job.profile, {cascade: true})
     job: Job
 
-    @OneToMany(() => Media, (media) => media.profile)
+    @OneToMany(() => Media, (media) => media.profile, {cascade: true})
     media_profile: Media
 
-    @OneToMany(() => MediaCover, (media) => media.profile)
+    @OneToMany(() => MediaCover, (media) => media.profile, {cascade: true})
     media_profile_cover: MediaCover
 
     @CreateDateColumn()

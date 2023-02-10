@@ -10,10 +10,11 @@ import authMailer from '../mail/auth.mailer';
 import * as moment from 'moment';
 import serverError from '../utils/err/server.error';
 import ProfileController from './profile.controller';
-import { env } from 'process';
+import { env } from '../config/env.config';
 import profileController from './profile.controller';
 import { Role } from '../models/userRole';
 import clientError from '../utils/err/client.error';
+import slugify from 'slugify';
 
 class AuthController {
    constructor() {}
@@ -39,7 +40,13 @@ class AuthController {
          let usernameExist: any;
          let username: any;
          do {
-            username = 'djouma-by-africa-' + Math.floor(Math.random() * 10000);
+             // Defined the letter associated
+             const letter = 'd j o u m a f'.split(' ')
+             const letterRamdom = Math.floor(Math.random() * letter.length)
+ 
+             // Defined the slug of profile
+             username =  `${slugify('djoumaf', '_')}_${Math.floor(Math.random() * 10000)}${letter[letterRamdom]}`.toLowerCase();
+ 
             usernameExist = await db
                .getRepository(User)
                .findOne({ where: { username } });
@@ -65,7 +72,7 @@ class AuthController {
          const hashPassword = await bcrypt.hash(password, salt);
 
          // GENERATE A UNIQUE TOKEN
-         const __RToken__ = jwt.sign({ _id: email }, process.env.SECRET_TOKEN);
+         const __RToken__ = jwt.sign({ _id: email }, env.SECRET_TOKEN);
 
          // Get Role
          const role = await db
@@ -83,9 +90,9 @@ class AuthController {
             password: hashPassword,
             token: __RToken__,
             role: role,
-            signup_place: signin_place,
-            signin_place,
-            device,
+            signup_place: signin_place?.city ?  JSON.stringify(signin_place) : null,
+            signin_place: signin_place?.city ?  JSON.stringify(signin_place) : null,
+            device: device?.model ? JSON.stringify(device) : null,
             verify_email_expire: moment.utc().add(3, 'days').toISOString()
          });
 
@@ -191,10 +198,8 @@ class AuthController {
             const result = await db.getRepository(User).update(
                { email },
                {
-                  rest_password_code: {
-                     code: code,
-                     expiry_date: moment().utc().add(30, 'minutes'),
-                  },
+                  verify_code_expire: moment().utc().add(30, 'minutes').toISOString(),
+                  rest_password_code: code,
                }
             );
 
@@ -229,8 +234,8 @@ class AuthController {
          const codeToExist = await xUser.findOne({ where: { email } });
          if (
             (!codeToExist.rest_password_code &&
-               codeToExist.rest_password_code['code'] !== code) ||
-            codeToExist.rest_password_code['code'] !== code
+               codeToExist.rest_password_code !== code) ||
+            codeToExist.rest_password_code !== code
          )
             return useValidateError.withoutInput(res, {
                message: "Ce code n'est plus disponible.",
@@ -239,10 +244,10 @@ class AuthController {
 
          // Verify if code is associate to user by email
          const isExpiredCode = moment(
-            codeToExist.rest_password_code['expiry_date']
+            codeToExist.verify_code_expire
          ).diff(new Date());
          if (
-            codeToExist.rest_password_code['code'] === code &&
+            codeToExist.rest_password_code === code &&
             isExpiredCode < 0
          ) {
             return useValidateError.withoutInput(res, {
@@ -287,8 +292,8 @@ class AuthController {
          const codeToExist = await xUser.findOne({ where: { email } });
          if (
             (!codeToExist.rest_password_code &&
-               codeToExist.rest_password_code['code'] !== code) ||
-            codeToExist.rest_password_code['code'] !== code
+               codeToExist.rest_password_code !== code) ||
+            codeToExist.rest_password_code !== code
          )
             return useValidateError.withoutInput(res, {
                message: "Ce code n'est plus disponible.",
@@ -297,10 +302,10 @@ class AuthController {
 
          // Verify if code is associate to user by email
          const isExpiredCode = moment(
-            codeToExist.rest_password_code['expiry_date']
+            codeToExist.verify_code_expire
          ).diff(new Date());
          if (
-            codeToExist.rest_password_code['code'] === code &&
+            codeToExist.rest_password_code === code &&
             isExpiredCode < 0
          ) {
             return useValidateError.withoutInput(res, {

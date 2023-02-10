@@ -18,7 +18,7 @@ export class Talks {
     @JoinTable({name: "user_in_talks"})
     user: User
 
-    @OneToMany(() => Message, (message) => message.talk, { onDelete: "CASCADE" })
+    @OneToMany(() => Message, (message) => message.talk, {cascade: true})
     message: Message
 
     @CreateDateColumn()

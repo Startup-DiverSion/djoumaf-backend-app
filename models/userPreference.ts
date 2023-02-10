@@ -11,13 +11,13 @@ export class Preference {
     @PrimaryGeneratedColumn()
     id: Number
 
-    @ManyToOne(() => Parameter, (type) => type.preference)
+    @ManyToOne(() => Parameter, (type) => type.preference, {onDelete: 'CASCADE',})
     parameter: Parameter[]
 
-    @ManyToOne(() => TypeParameter, (type) => type.parameter)
+    @ManyToOne(() => TypeParameter, (type) => type.parameter, {onDelete: 'CASCADE',})
     parent: TypeParameter
 
-    @ManyToOne(() => User, (type) => type.preference)
+    @ManyToOne(() => User, (type) => type.preference, {onDelete: 'CASCADE',})
     user: User
 
     @CreateDateColumn()

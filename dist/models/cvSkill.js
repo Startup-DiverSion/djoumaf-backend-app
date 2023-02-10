@@ -10,44 +10,41 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SkillCv = void 0;
-var typeorm_1 = require("typeorm");
-var parameter_1 = require("./parameter");
-var user_1 = require("./user");
-var parameterType_1 = require("./parameterType");
-var SkillCv = /** @class */ (function () {
-    function SkillCv() {
-    }
-    __decorate([
-        (0, typeorm_1.PrimaryGeneratedColumn)(),
-        __metadata("design:type", Number)
-    ], SkillCv.prototype, "id", void 0);
-    __decorate([
-        (0, typeorm_1.ManyToOne)(function () { return parameter_1.Parameter; }, function (type) { return type.preference; }),
-        __metadata("design:type", Array)
-    ], SkillCv.prototype, "parameter", void 0);
-    __decorate([
-        (0, typeorm_1.ManyToOne)(function () { return parameterType_1.TypeParameter; }, function (type) { return type.parameter; }),
-        __metadata("design:type", parameterType_1.TypeParameter)
-    ], SkillCv.prototype, "parent", void 0);
-    __decorate([
-        (0, typeorm_1.ManyToOne)(function () { return user_1.User; }, function (type) { return type.preference; }, { cascade: true }),
-        __metadata("design:type", user_1.User)
-    ], SkillCv.prototype, "user", void 0);
-    __decorate([
-        (0, typeorm_1.CreateDateColumn)(),
-        __metadata("design:type", Date)
-    ], SkillCv.prototype, "created_at", void 0);
-    __decorate([
-        (0, typeorm_1.UpdateDateColumn)(),
-        __metadata("design:type", Date)
-    ], SkillCv.prototype, "updated_at", void 0);
-    __decorate([
-        (0, typeorm_1.DeleteDateColumn)(),
-        __metadata("design:type", Date)
-    ], SkillCv.prototype, "deleted_at", void 0);
-    SkillCv = __decorate([
-        (0, typeorm_1.Entity)("cv_skills")
-    ], SkillCv);
-    return SkillCv;
-}());
+const typeorm_1 = require("typeorm");
+const parameter_1 = require("./parameter");
+const user_1 = require("./user");
+const parameterType_1 = require("./parameterType");
+let SkillCv = class SkillCv {
+};
+__decorate([
+    (0, typeorm_1.PrimaryGeneratedColumn)(),
+    __metadata("design:type", Number)
+], SkillCv.prototype, "id", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => parameter_1.Parameter, (type) => type.preference, { onDelete: 'CASCADE', }),
+    __metadata("design:type", Array)
+], SkillCv.prototype, "parameter", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => parameterType_1.TypeParameter, (type) => type.parameter, { onDelete: 'CASCADE', }),
+    __metadata("design:type", parameterType_1.TypeParameter)
+], SkillCv.prototype, "parent", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => user_1.User, (type) => type.preference, { onDelete: 'CASCADE', }),
+    __metadata("design:type", user_1.User)
+], SkillCv.prototype, "user", void 0);
+__decorate([
+    (0, typeorm_1.CreateDateColumn)(),
+    __metadata("design:type", Date)
+], SkillCv.prototype, "created_at", void 0);
+__decorate([
+    (0, typeorm_1.UpdateDateColumn)(),
+    __metadata("design:type", Date)
+], SkillCv.prototype, "updated_at", void 0);
+__decorate([
+    (0, typeorm_1.DeleteDateColumn)(),
+    __metadata("design:type", Date)
+], SkillCv.prototype, "deleted_at", void 0);
+SkillCv = __decorate([
+    (0, typeorm_1.Entity)("cv_skills")
+], SkillCv);
 exports.SkillCv = SkillCv;

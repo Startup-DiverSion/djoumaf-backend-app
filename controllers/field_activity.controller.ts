@@ -26,23 +26,23 @@ class FieldActivityController {
             let field_activity = []
 
             // Get
-            const JFieldActivity = await getAllJobs.find({relations: {field_activity : true}})
-            if(!JFieldActivity) return res.send({field_activity})
+            // const JFieldActivity = await getAllJobs.find({relations: {field_activity : true}})
+            // if(!JFieldActivity) return res.send({field_activity})
 
-            JFieldActivity.forEach(field => {
+            // JFieldActivity.forEach(field => {
 
-                for (let i = 0; i < field_activity.length; i++) {
-                    const el = field_activity[i];
+            //     for (let i = 0; i < field_activity.length; i++) {
+            //         const el = field_activity[i];
                     
-                    if(field.title !== el.name){
-                        field_activity.push({name: field.title, count: 0 })
-                    }else{
-                        el.count = el.count + 1
-                    }
+            //         if(field.title !== el.name){
+            //             field_activity.push({name: field.title, count: 0 })
+            //         }else{
+            //             el.count = el.count + 1
+            //         }
 
-                }
+            //     }
                 
-            });
+            // });
 
             return res.send({field_activity})
 

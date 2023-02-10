@@ -10,38 +10,35 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Message = void 0;
-var typeorm_1 = require("typeorm");
-var talks_1 = require("./talks");
-var Message = /** @class */ (function () {
-    function Message() {
-    }
-    __decorate([
-        (0, typeorm_1.PrimaryGeneratedColumn)(),
-        __metadata("design:type", Number)
-    ], Message.prototype, "id", void 0);
-    __decorate([
-        (0, typeorm_1.Column)({ type: 'longtext' }),
-        __metadata("design:type", String)
-    ], Message.prototype, "text", void 0);
-    __decorate([
-        (0, typeorm_1.ManyToOne)(function () { return talks_1.Talks; }, function (talk) { return talk.message; }, { onDelete: "CASCADE" }),
-        __metadata("design:type", talks_1.Talks)
-    ], Message.prototype, "talk", void 0);
-    __decorate([
-        (0, typeorm_1.CreateDateColumn)(),
-        __metadata("design:type", Date)
-    ], Message.prototype, "created_at", void 0);
-    __decorate([
-        (0, typeorm_1.UpdateDateColumn)(),
-        __metadata("design:type", Date)
-    ], Message.prototype, "updated_at", void 0);
-    __decorate([
-        (0, typeorm_1.DeleteDateColumn)(),
-        __metadata("design:type", Date)
-    ], Message.prototype, "deleted_at", void 0);
-    Message = __decorate([
-        (0, typeorm_1.Entity)("messages")
-    ], Message);
-    return Message;
-}());
+const typeorm_1 = require("typeorm");
+const talks_1 = require("./talks");
+let Message = class Message {
+};
+__decorate([
+    (0, typeorm_1.PrimaryGeneratedColumn)(),
+    __metadata("design:type", Number)
+], Message.prototype, "id", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'longtext' }),
+    __metadata("design:type", String)
+], Message.prototype, "text", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => talks_1.Talks, (talk) => talk.message, { onDelete: "CASCADE" }),
+    __metadata("design:type", talks_1.Talks)
+], Message.prototype, "talk", void 0);
+__decorate([
+    (0, typeorm_1.CreateDateColumn)(),
+    __metadata("design:type", Date)
+], Message.prototype, "created_at", void 0);
+__decorate([
+    (0, typeorm_1.UpdateDateColumn)(),
+    __metadata("design:type", Date)
+], Message.prototype, "updated_at", void 0);
+__decorate([
+    (0, typeorm_1.DeleteDateColumn)(),
+    __metadata("design:type", Date)
+], Message.prototype, "deleted_at", void 0);
+Message = __decorate([
+    (0, typeorm_1.Entity)("messages")
+], Message);
 exports.Message = Message;

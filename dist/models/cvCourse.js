@@ -10,71 +10,68 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CourseCV = void 0;
-var typeorm_1 = require("typeorm");
-var parameter_1 = require("./parameter");
-var user_1 = require("./user");
-var CourseCV = /** @class */ (function () {
-    function CourseCV() {
-    }
-    __decorate([
-        (0, typeorm_1.PrimaryGeneratedColumn)(),
-        __metadata("design:type", Number)
-    ], CourseCV.prototype, "id", void 0);
-    __decorate([
-        (0, typeorm_1.Column)(),
-        __metadata("design:type", String)
-    ], CourseCV.prototype, "slug", void 0);
-    __decorate([
-        (0, typeorm_1.Column)(),
-        __metadata("design:type", String)
-    ], CourseCV.prototype, "etablishment", void 0);
-    __decorate([
-        (0, typeorm_1.ManyToOne)(function () { return parameter_1.Parameter; }, function (parameter) { return parameter.type_parameter; }),
-        __metadata("design:type", parameter_1.Parameter)
-    ], CourseCV.prototype, "diploma", void 0);
-    __decorate([
-        (0, typeorm_1.Column)(),
-        __metadata("design:type", String)
-    ], CourseCV.prototype, "domain", void 0);
-    __decorate([
-        (0, typeorm_1.Column)(),
-        __metadata("design:type", String)
-    ], CourseCV.prototype, "date_start", void 0);
-    __decorate([
-        (0, typeorm_1.Column)({ nullable: true }),
-        __metadata("design:type", String)
-    ], CourseCV.prototype, "date_finish", void 0);
-    __decorate([
-        (0, typeorm_1.Column)({ nullable: true, type: 'boolean' }),
-        __metadata("design:type", Boolean)
-    ], CourseCV.prototype, "currently_working", void 0);
-    __decorate([
-        (0, typeorm_1.Column)(),
-        __metadata("design:type", String)
-    ], CourseCV.prototype, "workplace", void 0);
-    __decorate([
-        (0, typeorm_1.Column)({ type: 'longtext' }),
-        __metadata("design:type", String)
-    ], CourseCV.prototype, "description", void 0);
-    __decorate([
-        (0, typeorm_1.ManyToOne)(function () { return user_1.User; }, function (user) { return user.profile; }, { cascade: true }),
-        __metadata("design:type", user_1.User)
-    ], CourseCV.prototype, "user", void 0);
-    __decorate([
-        (0, typeorm_1.CreateDateColumn)(),
-        __metadata("design:type", Date)
-    ], CourseCV.prototype, "created_at", void 0);
-    __decorate([
-        (0, typeorm_1.UpdateDateColumn)(),
-        __metadata("design:type", Date)
-    ], CourseCV.prototype, "updated_at", void 0);
-    __decorate([
-        (0, typeorm_1.DeleteDateColumn)(),
-        __metadata("design:type", Date)
-    ], CourseCV.prototype, "deleted_at", void 0);
-    CourseCV = __decorate([
-        (0, typeorm_1.Entity)("cv_courses")
-    ], CourseCV);
-    return CourseCV;
-}());
+const typeorm_1 = require("typeorm");
+const parameter_1 = require("./parameter");
+const user_1 = require("./user");
+let CourseCV = class CourseCV {
+};
+__decorate([
+    (0, typeorm_1.PrimaryGeneratedColumn)(),
+    __metadata("design:type", Number)
+], CourseCV.prototype, "id", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], CourseCV.prototype, "slug", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], CourseCV.prototype, "etablishment", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => parameter_1.Parameter, (parameter) => parameter.type_parameter),
+    __metadata("design:type", parameter_1.Parameter)
+], CourseCV.prototype, "diploma", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], CourseCV.prototype, "domain", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], CourseCV.prototype, "date_start", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], CourseCV.prototype, "date_finish", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true, type: 'boolean' }),
+    __metadata("design:type", Boolean)
+], CourseCV.prototype, "currently_working", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], CourseCV.prototype, "workplace", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'longtext' }),
+    __metadata("design:type", String)
+], CourseCV.prototype, "description", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => user_1.User, (user) => user.profile, { onDelete: 'CASCADE', }),
+    __metadata("design:type", user_1.User)
+], CourseCV.prototype, "user", void 0);
+__decorate([
+    (0, typeorm_1.CreateDateColumn)(),
+    __metadata("design:type", Date)
+], CourseCV.prototype, "created_at", void 0);
+__decorate([
+    (0, typeorm_1.UpdateDateColumn)(),
+    __metadata("design:type", Date)
+], CourseCV.prototype, "updated_at", void 0);
+__decorate([
+    (0, typeorm_1.DeleteDateColumn)(),
+    __metadata("design:type", Date)
+], CourseCV.prototype, "deleted_at", void 0);
+CourseCV = __decorate([
+    (0, typeorm_1.Entity)("cv_courses")
+], CourseCV);
 exports.CourseCV = CourseCV;

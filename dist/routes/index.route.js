@@ -1,28 +1,29 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var express = require("express");
-var ware_verifyToken_1 = require("../middlewares/auth/ware.verifyToken");
-var router = express.Router();
+const express = require("express");
+const ware_verifyToken_1 = require("../middlewares/auth/ware.verifyToken");
+const router = express.Router();
 /**
  * IMPORT ALL CONTROLLERS
  */
-var auth_controller_1 = require("../controllers/auth.controller");
-var image_config_1 = require("../config/image.config");
-var parameter_controller_1 = require("../controllers/parameter.controller");
-var profile_controller_1 = require("../controllers/profile.controller");
-var job_controller_1 = require("../controllers/job.controller");
-var send_mailer_1 = require("../mail/send.mailer");
-var field_activity_controller_1 = require("../controllers/field_activity.controller");
-var to_apply_controller_1 = require("../controllers/to_apply.controller");
-var media_controller_1 = require("../controllers/media.controller");
-var talk_mail_controller_1 = require("../controllers/talk_mail.controller");
+const auth_controller_1 = require("../controllers/auth.controller");
+const image_config_1 = require("../config/image.config");
+const parameter_controller_1 = require("../controllers/parameter.controller");
+const profile_controller_1 = require("../controllers/profile.controller");
+const job_controller_1 = require("../controllers/job.controller");
+const send_mailer_1 = require("../mail/send.mailer");
+const field_activity_controller_1 = require("../controllers/field_activity.controller");
+const to_apply_controller_1 = require("../controllers/to_apply.controller");
+const media_controller_1 = require("../controllers/media.controller");
+const talk_mail_controller_1 = require("../controllers/talk_mail.controller");
+const user_controller_1 = require("../controllers/user.controller");
 /**
  *
  * @param app
  */
-var Routes = function (app) {
-    router.get('/', function (req, res) { res.send('Hello api djoumaf...'); });
-    app.get('/with-cors', function (req, res) {
+const Routes = (app) => {
+    router.get('/', (req, res) => { res.send('Hello api djoumaf...'); });
+    app.get('/with-cors', (req, res) => {
         res.json({ msg: 'WHOAH with CORS it works! 🔝 🎉' });
     });
     // ALL ROUTES OF AUTH CONTROLLER
@@ -39,13 +40,15 @@ var Routes = function (app) {
     router.post('/profile/show_slug', profile_controller_1.default.showWihSlug);
     router.post('/profile/update', image_config_1.default.uploadFile().single("file"), profile_controller_1.default.update);
     router.delete('/profile/delete/:id', ware_verifyToken_1.wareVerifyTokenUser, profile_controller_1.default.delete);
+    // All users
+    router.get('/user', user_controller_1.default.index);
     // All Routes medias
     router.post('/media/profile/update', image_config_1.default.uploadFile().single("file"), media_controller_1.default.update);
     // ALL ROUTES OF PARAMETRE CONTROLLER
     router.get('/parameter', parameter_controller_1.default.index);
     // ALL ROUTES OF job CONTROLLER
-    router.get('/job', ware_verifyToken_1.wareVerifyTokenUser, job_controller_1.default.index);
-    router.post('/job/show', ware_verifyToken_1.wareVerifyTokenUser, job_controller_1.default.show);
+    router.get('/job', job_controller_1.default.index);
+    router.post('/job/show', job_controller_1.default.show);
     router.post('/job/create', ware_verifyToken_1.wareVerifyTokenUser, job_controller_1.default.create);
     router.delete('/job/delete/:id', ware_verifyToken_1.wareVerifyTokenUser, job_controller_1.default.delete);
     /* Job Apply */
@@ -60,7 +63,7 @@ var Routes = function (app) {
     // All routes Talks Chat Message
     router.get('/talk/messages', field_activity_controller_1.default.number_activities_depending_job);
     // 
-    router.get('/feed', ware_verifyToken_1.wareVerifyTokenUser, function (req, res) {
+    router.get('/feed', ware_verifyToken_1.wareVerifyTokenUser, (req, res) => {
         res.status(201).send({ Feed: [] });
     });
     //Return All routes

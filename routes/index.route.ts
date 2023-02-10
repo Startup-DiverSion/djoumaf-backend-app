@@ -16,12 +16,15 @@ import FieldActivityController from "../controllers/field_activity.controller";
 import to_applyController from "../controllers/to_apply.controller";
 import MediaController from "../controllers/media.controller";
 import TalkMailController from "../controllers/talk_mail.controller";
+import UserController from "../controllers/user.controller";
 
 
 /**
  * 
  * @param app 
  */
+
+
 const Routes = (app: any) => {
    router.get('/', (req: Request, res: Response) => { res.send('Hello api djoumaf...') });
    app.get('/with-cors', (req: Request, res: Response) => {
@@ -44,6 +47,9 @@ const Routes = (app: any) => {
    router.post('/profile/update',ImageConfig.uploadFile().single("file"), ProfileController.update);
    router.delete('/profile/delete/:id',  wareVerifyTokenUser, ProfileController.delete);
 
+   // All users
+   router.get('/user', UserController.index);
+
    // All Routes medias
    router.post('/media/profile/update',ImageConfig.uploadFile().single("file"), MediaController.update);
 
@@ -52,8 +58,8 @@ const Routes = (app: any) => {
 
 
    // ALL ROUTES OF job CONTROLLER
-   router.get('/job', wareVerifyTokenUser, JobController.index);
-   router.post('/job/show',  wareVerifyTokenUser, JobController.show);
+   router.get('/job', JobController.index);
+   router.post('/job/show', JobController.show);
    router.post('/job/create',  wareVerifyTokenUser,  JobController.create);
    router.delete('/job/delete/:id',  wareVerifyTokenUser, JobController.delete);
    /* Job Apply */

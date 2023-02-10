@@ -8,131 +8,185 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (g && (g = 0, op[0] && (_ = 0)), _) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SendEmailToOldUser = void 0;
-var index_database_1 = require("../database/index.database");
-var user_1 = require("../models/user");
-var oldUserDb_1 = require("../oldUserDb");
+const index_database_1 = require("../database/index.database");
+const user_1 = require("../models/user");
+const oldUserDb_1 = require("../oldUserDb");
 require("dotenv/config");
-var input_error_1 = require("../utils/err/input.error");
-var bcrypt = require("bcrypt");
-var jwt = require("jsonwebtoken");
-var auth_mailer_1 = require("../mail/auth.mailer");
-var server_error_1 = require("../utils/err/server.error");
-var profile_controller_1 = require("./../controllers/profile.controller");
-var SendEmailToOldUser = /** @class */ (function () {
-    function SendEmailToOldUser() {
-    }
-    SendEmailToOldUser.prototype.create_user = function (req, res) {
-        return __awaiter(this, void 0, void 0, function () {
-            var _this = this;
-            return __generator(this, function (_a) {
-                try {
-                    // GET FIELD TO SIGN UP USER
-                    oldUserDb_1.dataSelected.data.forEach(function (oldUser) { return __awaiter(_this, void 0, void 0, function () {
-                        var emailExist, usernameExist, username, salt, hashPassword, __RToken__, newUser, user, CreateProfile, AssocciateProfileToUser;
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0: return [4 /*yield*/, index_database_1.db
-                                        .getRepository(user_1.User)
-                                        .findOne({ where: { email: oldUser.email } })];
-                                case 1:
-                                    emailExist = _a.sent();
-                                    if (!!emailExist) return [3 /*break*/, 11];
-                                    usernameExist = void 0;
-                                    username = void 0;
-                                    _a.label = 2;
-                                case 2:
-                                    username =
-                                        'djouma-by-africa-' + Math.floor(Math.random() * 10000);
-                                    return [4 /*yield*/, index_database_1.db
-                                            .getRepository(user_1.User)
-                                            .findOne({ where: { username: username } })];
-                                case 3:
-                                    usernameExist = _a.sent();
-                                    if (usernameExist)
-                                        return [2 /*return*/, input_error_1.default.withoutInput(res, {
-                                                message: 'Username est dèja utiliser !',
-                                                path: 'email',
-                                            })];
-                                    _a.label = 4;
-                                case 4:
-                                    if (usernameExist) return [3 /*break*/, 2];
-                                    _a.label = 5;
-                                case 5: return [4 /*yield*/, bcrypt.genSalt(10)];
-                                case 6:
-                                    salt = _a.sent();
-                                    return [4 /*yield*/, bcrypt.hash('s0//P4$$w0rD', salt)];
-                                case 7:
-                                    hashPassword = _a.sent();
-                                    __RToken__ = jwt.sign({ _id: oldUser.email }, process.env.SECRET_TOKEN);
-                                    newUser = index_database_1.db.getRepository(user_1.User).create({
-                                        username: username,
-                                        email: oldUser.email,
-                                        password: hashPassword,
-                                        token: __RToken__,
-                                    });
-                                    return [4 /*yield*/, index_database_1.db.getRepository(user_1.User).save(newUser)];
-                                case 8:
-                                    user = _a.sent();
-                                    if (!user)
-                                        return [2 /*return*/, server_error_1.default.notInsertToDatabase(res)];
-                                    return [4 /*yield*/, profile_controller_1.default.create(req, res)];
-                                case 9:
-                                    CreateProfile = _a.sent();
-                                    if (!CreateProfile)
-                                        return [2 /*return*/, server_error_1.default.notInsertToDatabase(res)];
-                                    AssocciateProfileToUser = index_database_1.db
-                                        .getRepository(user_1.User)
-                                        .update({ id: newUser.id }, { profile: CreateProfile['id'] });
-                                    if (!AssocciateProfileToUser)
-                                        return [2 /*return*/, server_error_1.default.notInsertToDatabase(res)];
-                                    // SUCESS CREATE NEW USER
-                                    return [4 /*yield*/, auth_mailer_1.default.sendMailToOldUser(oldUser.email, 's0//P4$$w0rD')];
-                                case 10:
-                                    // SUCESS CREATE NEW USER
-                                    _a.sent();
-                                    console.log('fait!');
-                                    _a.label = 11;
-                                case 11: return [2 /*return*/];
-                            }
+const input_error_1 = require("../utils/err/input.error");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const auth_mailer_1 = require("../mail/auth.mailer");
+const moment = require("moment");
+const server_error_1 = require("../utils/err/server.error");
+const env_config_1 = require("../config/env.config");
+const profile_controller_1 = require("./../controllers/profile.controller");
+const userRole_1 = require("../models/userRole");
+const slugify_1 = require("slugify");
+const userProfile_1 = require("../models/userProfile");
+const media_controller_1 = require("../controllers/media.controller");
+const mediaUserProfile_1 = require("../models/mediaUserProfile");
+const userPreference_1 = require("../models/userPreference");
+const parameter_1 = require("../models/parameter");
+class SendEmailToOldUser {
+    create_user(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                // GET FIELD TO SIGN UP USER
+                let email;
+                let signin_place;
+                let device;
+                let password = 'user-djoumaf-23';
+                let type_user = '65';
+                let description = 'bonjour';
+                // Initialize the user profile
+                const jProfile = index_database_1.db.getRepository(userProfile_1.Profile);
+                const jMedia = index_database_1.db.getRepository(mediaUserProfile_1.Media);
+                const jPreference = index_database_1.db.getRepository(userPreference_1.Preference);
+                const jParametre = index_database_1.db.getRepository(parameter_1.Parameter);
+                for (let i = 0; i < oldUserDb_1.dataSelected.data.length; i++) {
+                    const oldUser = oldUserDb_1.dataSelected.data[i];
+                    email = oldUser.email;
+                    const suser = yield index_database_1.db.getRepository(user_1.User).findOne({ where: { email } });
+                    if ((suser === null || suser === void 0 ? void 0 : suser.email) !== email) {
+                        // VERIFY IF USERNAME ALREADY EXISTS IN DATABASE
+                        let usernameExist;
+                        let username;
+                        do {
+                            // Defined the letter associated
+                            const letter = 'd j o u m a f'.split(' ');
+                            const letterRamdom = Math.floor(Math.random() * letter.length);
+                            // Defined the slug of profile
+                            username = `${(0, slugify_1.default)('djoumaf', '_')}_${Math.floor(Math.random() * 10000)}${letter[letterRamdom]}`.toLowerCase();
+                            usernameExist = yield index_database_1.db
+                                .getRepository(user_1.User)
+                                .findOne({ where: { username } });
+                            if (usernameExist)
+                                return input_error_1.default.withoutInput(res, {
+                                    message: 'Username est dèja utiliser !',
+                                    path: 'email',
+                                });
+                        } while (usernameExist);
+                        // VERIFY IF EMAIL ALREADY EXISTS IN DATABASE
+                        const emailExist = yield index_database_1.db
+                            .getRepository(user_1.User)
+                            .findOne({ where: { email } });
+                        if (emailExist)
+                            return input_error_1.default.withoutInput(res, {
+                                message: "L'adresse email à déjà été pris",
+                                path: 'email',
+                            });
+                        // HASH THE PASSWORD
+                        const salt = yield bcrypt.genSalt(10);
+                        const hashPassword = yield bcrypt.hash(password, salt);
+                        // GENERATE A UNIQUE TOKEN
+                        const __RToken__ = jwt.sign({ _id: email }, env_config_1.env.SECRET_TOKEN);
+                        // Get Role
+                        const role = yield index_database_1.db
+                            .getRepository(userRole_1.Role)
+                            .findOne({ where: { slug: 'dj_user' } });
+                        if (!role)
+                            return server_error_1.default.noDataMatches(res, {
+                                message: 'No existe in database',
+                            });
+                        // CREATING THE NEW USER
+                        'sd'.toLowerCase();
+                        const newUser = index_database_1.db.getRepository(user_1.User).create({
+                            username: username,
+                            email: email.toLowerCase().trim(),
+                            password: hashPassword,
+                            token: __RToken__,
+                            role: role,
+                            signup_place: (signin_place === null || signin_place === void 0 ? void 0 : signin_place.city)
+                                ? JSON.stringify(signin_place)
+                                : null,
+                            signin_place: (signin_place === null || signin_place === void 0 ? void 0 : signin_place.city)
+                                ? JSON.stringify(signin_place)
+                                : null,
+                            device: (device === null || device === void 0 ? void 0 : device.model) ? JSON.stringify(device) : null,
+                            verify_email_expire: moment
+                                .utc()
+                                .add(3, 'days')
+                                .toISOString(),
                         });
-                    }); });
+                        const user = yield index_database_1.db.getRepository(user_1.User).save(newUser);
+                        if (!user)
+                            return server_error_1.default.notInsertToDatabase(res);
+                        // Create profile
+                        const CreateProfile = yield profile_controller_1.default.create(req, res);
+                        if (!CreateProfile)
+                            return server_error_1.default.notInsertToDatabase(res);
+                        if (CreateProfile) {
+                            const full_name = oldUser.nom + ' ' + oldUser.prenoms;
+                            let slugExist;
+                            let slug;
+                            do {
+                                // Defined the letter associated
+                                const letter = 'd j o u m a f'.split(' ');
+                                const letterRamdom = Math.floor(Math.random() * letter.length);
+                                // Defined the slug of profile
+                                slug = `${(0, slugify_1.default)(full_name, '_')}_${Math.floor(Math.random() * 10000)}${letter[letterRamdom]}`.toLowerCase();
+                                // Get profile
+                                slugExist = yield index_database_1.db
+                                    .getRepository(userProfile_1.Profile)
+                                    .findOne({ where: { slug } });
+                                if (slugExist)
+                                    return input_error_1.default.withoutInput(res, {
+                                        message: 'slug est dèja utiliser !',
+                                        path: 'all',
+                                    });
+                            } while (slugExist);
+                            // Add image to profile
+                            yield media_controller_1.default.create(req, res, CreateProfile['id']);
+                            // Add preference of profile
+                            let preferenceID = [65, 40, 41];
+                            for (let i = 0; i < preferenceID.length; i++) {
+                                const el = preferenceID[i];
+                                const parameter = yield jParametre.findOne({
+                                    where: { id: el },
+                                    relations: { type_parameter: true },
+                                });
+                                const newPreference = jPreference.create({
+                                    parameter: el,
+                                    user: user,
+                                    parent: parameter.type_parameter,
+                                });
+                                const savePreference = yield jPreference.save(newPreference);
+                                if (!savePreference)
+                                    return server_error_1.default.notInsertToDatabase(res);
+                                if (savePreference.parameter === type_user) {
+                                    type_user = savePreference;
+                                }
+                            }
+                            let updateProfile = index_database_1.db.getRepository(userProfile_1.Profile).update({ id: CreateProfile['id'] }, {
+                                id: CreateProfile['id'],
+                                first_name: oldUser.nom,
+                                last_name: oldUser.prenoms,
+                                type_user,
+                                full_name,
+                                description,
+                                slug,
+                                bio: 'test',
+                                lvl: 1,
+                            });
+                        }
+                        // Associate the profile to user
+                        const AssocciateProfileToUser = index_database_1.db
+                            .getRepository(user_1.User)
+                            .update({ id: newUser.id }, { profile: CreateProfile['id'] });
+                        if (!AssocciateProfileToUser)
+                            return server_error_1.default.notInsertToDatabase(res);
+                        // Send email of verification
+                        yield auth_mailer_1.default.sendMailToOldUser(email, password);
+                    }
                 }
-                catch (error) {
-                    return [2 /*return*/, server_error_1.default.catchError(res, error)];
-                }
-                return [2 /*return*/];
-            });
+                ;
+            }
+            catch (error) {
+                return server_error_1.default.catchError(res, error);
+            }
         });
-    };
-    return SendEmailToOldUser;
-}());
+    }
+}
 exports.SendEmailToOldUser = SendEmailToOldUser;

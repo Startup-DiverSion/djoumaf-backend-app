@@ -30,6 +30,8 @@ class ToApplyController {
          // Initialize
 
          // Get by specific selection one Apply data
+      
+
          const getToApply = userID
             ? await jToApply.findOne({
                  where: { user_id: userID, job_id: jobID },

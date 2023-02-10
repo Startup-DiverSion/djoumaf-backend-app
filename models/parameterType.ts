@@ -14,7 +14,7 @@ export class TypeParameter {
     @Column()
     title: string
 
-    @OneToMany(() => Parameter, (parameter) => parameter.type_parameter)
+    @OneToMany(() => Parameter, (parameter) => parameter.type_parameter, {cascade: true})
     parameter: Parameter
 
     @CreateDateColumn()

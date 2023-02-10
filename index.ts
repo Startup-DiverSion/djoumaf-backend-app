@@ -7,6 +7,9 @@ import InitRoutes from './routes/index.route';
 import { startDb } from './database/index.database';
 import * as path from 'path';
 const socket = require('socket.io');
+import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
+import { env } from './config/env.config';
+dotenv.config()
 
 // create and setup express app
 const app = express();
@@ -15,19 +18,18 @@ const app = express();
 //middleware
 // Add a list of allowed origins.
 // If you have more origins you would like to add, you can add them to the array below.
-const allowedOrigins:any = ['http://localhost:5173', 'https://djoumaf.com'];
+const allowedOrigins:any = ['http://localhost:5173', 'https://djoumaf.com', 'https://djoumaf.net'];
 
 const options: cors.CorsOptions = {
   origin: allowedOrigins
 };
 // Then pass these options to cors:
-app.use(cors(options));
+app.use(cors());
 
 app.use(express.json());
 
 
 //MIDDLEWARE ROUTE
-
 InitRoutes(app);
 app.use("/images", express.static("public"));
 app.use('/', express.static("templates"));
@@ -42,8 +44,8 @@ const start = async () => {
       
 
       // STARTING OF SERVER APP
-      server = app.listen(5001, () => {
-         console.log('Server started  => http://localhost:5001');
+      server = app.listen(env.PORT, () => {
+         console.log('Server started  => http://localhost:' + env.PORT);
       });
 
       // Socket setup
@@ -53,7 +55,7 @@ const start = async () => {
          console.log('Made socket connection');
 
          socket.on('new user', function (data: any) {
-            data = 'Ol';
+            data = 'Mon premier message.';
             io.emit('new user', data);
          });
       });

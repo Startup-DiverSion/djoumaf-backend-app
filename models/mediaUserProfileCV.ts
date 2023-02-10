@@ -8,8 +8,8 @@ export class MediaCv {
     @PrimaryGeneratedColumn()
     id: Number
 
-    @Column({type: 'json'})
-    url: JSON
+    @Column({nullable: true})
+    url: string
 
     @OneToMany(() => ModelCv, (cv) => cv.picture, { onDelete: "CASCADE" })
     model_cv: ModelCv

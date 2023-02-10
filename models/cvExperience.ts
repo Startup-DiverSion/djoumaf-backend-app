@@ -17,7 +17,7 @@ export class ExperienceCv {
     @Column()
     company_name: string
 
-    @ManyToOne(() => Parameter, (parameter) => parameter.type_parameter)
+    @ManyToOne(() => Parameter, (parameter) => parameter.type_parameter, {onDelete: 'CASCADE',})
     experience: Parameter
 
     @Column()
@@ -35,10 +35,10 @@ export class ExperienceCv {
     @Column({type: 'longtext'})
     description: string
 
-    @ManyToOne(() => SkillCv, (sk) => sk.parameter)
+    @ManyToOne(() => SkillCv, (sk) => sk.parameter, {onDelete: 'CASCADE',})
     skill: SkillCv[]
 
-    @ManyToOne(() => User, (user) => user.profile, {cascade: true})
+    @ManyToOne(() => User, (user) => user.profile, {onDelete: 'CASCADE',})
     user: User
 
     @CreateDateColumn()

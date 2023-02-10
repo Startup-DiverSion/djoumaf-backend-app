@@ -23,10 +23,10 @@ export class Chat {
   @Column()
   name: string;
 
-  @ManyToMany(type => User, user => user.chats)
+  @ManyToMany(type => User, user => user.chats, {onDelete: 'CASCADE',})
   users: User[];
 
-  @OneToMany(() => TalkMail, (message) => message.chat)
+  @OneToMany(() => TalkMail, (message) => message.chat, {cascade: true})
    message: TalkMail;
 
   

@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import * as jwt from 'jsonwebtoken';
 import { db } from '../database/index.database';
 import { User } from '../models/user';
+import { env } from '../config/env.config';
 
 class UserService {
    public async current(req: any = Request, res: any = Response) {
@@ -11,7 +12,7 @@ class UserService {
       if (!getTokenWeb)
          return res.status(401).send({ message: 'Accés interdit' });
 
-      const verified: any = jwt.verify(getTokenWeb, process.env.SECRET_TOKEN);
+      const verified: any = jwt.verify(getTokenWeb, env.SECRET_TOKEN);
       req.header = verified;
 
       // GET ID IN TOKEN WEB

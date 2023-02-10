@@ -38,7 +38,7 @@ export class CourseCV {
     @Column({type: 'longtext'})
     description: string
 
-    @ManyToOne(() => User, (user) => user.profile, {cascade: true})
+    @ManyToOne(() => User, (user) => user.profile, {onDelete: 'CASCADE',})
     user: User
 
     @CreateDateColumn()

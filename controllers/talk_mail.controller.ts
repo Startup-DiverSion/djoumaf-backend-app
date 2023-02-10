@@ -8,6 +8,7 @@ import useValidateError from '../utils/err/input.error';
 import * as jwt from 'jsonwebtoken';
 import { User } from '../models/user';
 import { Chat } from '../models/chat';
+import { env } from '../config/env.config';
 
 interface BODY_RESQUEST {
    subject: any;
@@ -60,7 +61,7 @@ class TalkMailController {
       do {
          xSignMail = jwt.sign(
             { _id: Auth.user.id },
-            process.env.SECRET_SIGN_MAIL
+            env.SECRET_SIGN_MAIL
          );
          signMail = await jTalkMail.findOne({ where: { sign: xSignMail } });
       } while (signMail);
