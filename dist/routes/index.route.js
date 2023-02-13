@@ -17,6 +17,8 @@ const to_apply_controller_1 = require("../controllers/to_apply.controller");
 const media_controller_1 = require("../controllers/media.controller");
 const talk_mail_controller_1 = require("../controllers/talk_mail.controller");
 const user_controller_1 = require("../controllers/user.controller");
+const profile_experience_controller_1 = require("../controllers/profile.experience.controller");
+const profile_course_controller_1 = require("../controllers/profile.course.controller");
 /**
  *
  * @param app
@@ -36,10 +38,18 @@ const Routes = (app) => {
     router.post('/auth/verify/is_owner_email', auth_controller_1.default.verify_is_owner);
     // All routes of profile CONTROLLER
     router.get('/profile', profile_controller_1.default.index);
+    router.get('/profile/particulier', profile_controller_1.default.particulier);
     router.post('/profile/show', profile_controller_1.default.show);
     router.post('/profile/show_slug', profile_controller_1.default.showWihSlug);
     router.post('/profile/update', image_config_1.default.uploadFile().single("file"), profile_controller_1.default.update);
+    router.post('/profile/edit', image_config_1.default.uploadFile().single("file"), profile_controller_1.default.updateOfProfile);
     router.delete('/profile/delete/:id', ware_verifyToken_1.wareVerifyTokenUser, profile_controller_1.default.delete);
+    // All routes of profile : Cv Experience CONTROLLER
+    router.get('/profile/experience', ware_verifyToken_1.wareVerifyTokenUser, profile_experience_controller_1.default.index);
+    router.post('/profile/experience/create', ware_verifyToken_1.wareVerifyTokenUser, profile_experience_controller_1.default.create);
+    // All routes of profile : Cv Course CONTROLLER
+    router.post('/profile/course', ware_verifyToken_1.wareVerifyTokenUser, profile_course_controller_1.default.index);
+    router.post('/profile/course/create', ware_verifyToken_1.wareVerifyTokenUser, profile_course_controller_1.default.create);
     // All users
     router.get('/user', user_controller_1.default.index);
     // All Routes medias

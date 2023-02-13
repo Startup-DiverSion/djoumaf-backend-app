@@ -191,7 +191,7 @@ export class SendEmailToOldUser {
                         id: CreateProfile['id'],
                         first_name: oldUser.nom,
                         last_name: oldUser.prenoms,
-                        type_user,
+                        type: type_user,
                         full_name,
                         description,
                         slug,
@@ -217,6 +217,10 @@ export class SendEmailToOldUser {
               
             }
          };
+
+
+         res.send('Send')
+
       } catch (error) {
          return serverError.catchError(res, error);
       }

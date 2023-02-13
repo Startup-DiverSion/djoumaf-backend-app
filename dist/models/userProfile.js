@@ -47,17 +47,33 @@ __decorate([
     __metadata("design:type", Object)
 ], Profile.prototype, "description", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => parameter_1.Parameter, (pref) => pref.preference, { onDelete: 'CASCADE', }),
+    (0, typeorm_1.ManyToOne)(() => parameter_1.Parameter, (p) => p.profile, { onDelete: 'CASCADE', }),
     __metadata("design:type", parameter_1.Parameter)
-], Profile.prototype, "type_user", void 0);
+], Profile.prototype, "type", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true, default: 65 }),
+    __metadata("design:type", Number)
+], Profile.prototype, "typeuser", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
-    __metadata("design:type", Date)
+    __metadata("design:type", String)
 ], Profile.prototype, "born", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
 ], Profile.prototype, "sex", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], Profile.prototype, "contact", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], Profile.prototype, "adresse", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], Profile.prototype, "site_web", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: false, default: 0 }),
     __metadata("design:type", Number)

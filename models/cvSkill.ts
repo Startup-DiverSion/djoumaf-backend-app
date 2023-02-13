@@ -4,6 +4,7 @@ import { Preference } from "./userPreference"
 import { Profile } from "./userProfile"
 import { User } from "./user"
 import { TypeParameter } from './parameterType';
+import { ExperienceCv } from "./cvExperience"
 
 @Entity("cv_skills")
 export class SkillCv {
@@ -20,6 +21,9 @@ export class SkillCv {
 
     @ManyToOne(() => User, (type) => type.preference, {onDelete: 'CASCADE',})
     user: User
+
+    @ManyToOne(() => ExperienceCv, (type) => type.skill, {onDelete: 'CASCADE',})
+    experience: ExperienceCv
 
 
     @CreateDateColumn()

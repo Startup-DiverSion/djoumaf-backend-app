@@ -2,6 +2,7 @@ import { ManyToOne, Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, Up
 import { TypeParameter } from "./parameterType"
 import { Preference } from "./userPreference"
 import { Job } from "./jobs"
+import { Profile } from "./userProfile"
 
 
 @Entity("parameters")
@@ -18,6 +19,9 @@ export class Parameter {
 
     @OneToMany(() => Preference, (preference) => preference.parameter, {cascade: true})
     preference: Preference
+
+    @OneToMany(() => Profile, (p) => p.type, {cascade: true})
+    profile: Profile
 
     @OneToMany(() => Job, (job) => job.field_activity, {cascade: true})
     job: Job

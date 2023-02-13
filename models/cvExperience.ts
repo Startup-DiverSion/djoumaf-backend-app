@@ -18,7 +18,7 @@ export class ExperienceCv {
     company_name: string
 
     @ManyToOne(() => Parameter, (parameter) => parameter.type_parameter, {onDelete: 'CASCADE',})
-    experience: Parameter
+    type_contract: Parameter
 
     @Column()
     date_start: string
@@ -35,7 +35,7 @@ export class ExperienceCv {
     @Column({type: 'longtext'})
     description: string
 
-    @ManyToOne(() => SkillCv, (sk) => sk.parameter, {onDelete: 'CASCADE',})
+    @OneToMany(() => SkillCv, (sk) => sk.experience, {cascade: true})
     skill: SkillCv[]
 
     @ManyToOne(() => User, (user) => user.profile, {onDelete: 'CASCADE',})

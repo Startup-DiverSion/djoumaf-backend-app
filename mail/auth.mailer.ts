@@ -51,7 +51,7 @@ class AuthMailer {
          ).then((result) => {
             mailConfiguration(
                receivers,
-               '[DJOUMAF] Comfirmez votre adresse email',
+               '[DJOUMAF] Ancien utilisateur',
                result
             );
          });

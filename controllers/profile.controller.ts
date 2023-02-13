@@ -13,6 +13,7 @@ import MediaService from '../services/media.services';
 import MediaController from './media.controller';
 import { MediaCover } from '../models/mediaUserProfileCover';
 import { Not, IsNull } from 'typeorm';
+import { slugGetter } from '../utils/adv/slug';
 
 class ProfileController {
    constructor() {}
@@ -24,21 +25,67 @@ class ProfileController {
 
          const JProfile = db.getRepository(Profile);
          let getAllProfile: any = [];
-         const relations = ['user', 'media_profile', 'media_profile_cover']
+         const relations = ['user', 'media_profile', 'media_profile_cover'];
 
-         //    Limit
-         console.log(query.limit);
-         if (query.limit && query.limit >= 0) {
-            const limit = parseInt(query.limit);
-            getAllProfile = await JProfile.find({ take: query.limit });
-            return res.send({ parameter: getAllProfile, relations });
+         const limit: any = query.limit ? parseInt(query.limit) : null;
+         const type: any = query.type ? parseInt(query.type) : null;
+         const types: any = query.type ? parseInt(query.type) : null;
+
+         if (limit && type) {
+            getAllProfile = await JProfile.find({
+               take: limit,
+               where: { typeuser: type, slug: Not(IsNull()) },
+               relations,
+            });
+         } else if (limit && !type) {
+            getAllProfile = await JProfile.find({
+               take: limit,
+               where: { slug: Not(IsNull()) },
+               relations,
+            });
+         } else if (!limit && type) {
+            getAllProfile = await JProfile.find({
+               take: limit,
+               where: { slug: Not(IsNull()) },
+               relations,
+            });
+         } else {
+            getAllProfile = await JProfile.find({
+               where: { slug: Not(IsNull()) },
+               relations,
+            });
          }
 
-         getAllProfile = await JProfile.find({ where: { 
-            slug: Not(IsNull())
-          } , relations});
          return res.send({ profiles: getAllProfile });
       } catch (error) {
+         serverError.catchError(res, error);
+      }
+   }
+
+   public async particulier(req: Request, res: Response) {
+      try {
+         const JProfile = db.getRepository(Profile);
+         const jParameter = db.getRepository(Parameter);
+         const relations = [
+            'user',
+            'type',
+            'media_profile',
+            'media_profile_cover',
+         ];
+
+         const xParameter: any = await jParameter.findOne({
+            where: { title: 'Particulier' },
+            relations: ['profile'],
+         });
+         if (!xParameter) return res.send({ profiles: [] });
+
+         const gatA: any = xParameter.profile.filter((el: any) => {
+            return el.slug !== null;
+         });
+
+         return res.send({ profiles: xParameter });
+      } catch (error) {
+         console.log(error);
          serverError.catchError(res, error);
       }
    }
@@ -204,7 +251,8 @@ class ProfileController {
                id,
                first_name,
                last_name,
-               type_user,
+               type: type_user,
+               typeuser: type_user.id,
                full_name,
                description,
                slug,
@@ -216,10 +264,64 @@ class ProfileController {
 
          const xUser = await db
             .getRepository(User)
-            .findOne({ where: { id }, relations: { profile: true } });
+            .findOne({ where: { profile: id }, relations: { profile: true } });
          if (!xUser) return serverError.noDataMatches(res);
 
          return res.send({ user: xUser });
+      } catch (error) {
+         console.log(error);
+         serverError.catchError(res, error);
+      }
+   }
+
+   //
+   public async updateOfProfile(req: Request, res: Response) {
+      try {
+         // Init
+         let {
+            id,
+            first_name,
+            last_name,
+            bio,
+            sex,
+            born,
+            contact,
+            adresse,
+            site_web,
+            description,
+         } = req.body;
+
+         // Initialize the user profile
+         const jProfile = db.getRepository(Profile);
+         const jMedia = db.getRepository(Media);
+         const jPreference = db.getRepository(Preference);
+         const jParametre = db.getRepository(Parameter);
+
+         const full_name = last_name + ' ' + first_name;
+         const { jSlug } = await slugGetter(res, full_name, Profile);
+
+         let updateProfile = jProfile.update(
+            { id: id },
+            {
+               first_name,
+               last_name,
+               full_name,
+               description,
+               adresse,
+               site_web,
+               sex,
+               born,
+               bio,
+            }
+         );
+         if (!updateProfile) return serverError.notInsertToDatabase(res);
+
+         const xUser = await db
+            .getRepository(User)
+            .findOne({ where: { profile: id }, relations: { profile: true } });
+         if (!xUser) return serverError.noDataMatches(res);
+
+         return res.send({ profile: xUser });
       } catch (error) {
          console.log(error);
          serverError.catchError(res, error);

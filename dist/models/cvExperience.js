@@ -31,7 +31,7 @@ __decorate([
 __decorate([
     (0, typeorm_1.ManyToOne)(() => parameter_1.Parameter, (parameter) => parameter.type_parameter, { onDelete: 'CASCADE', }),
     __metadata("design:type", parameter_1.Parameter)
-], ExperienceCv.prototype, "experience", void 0);
+], ExperienceCv.prototype, "type_contract", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
@@ -53,7 +53,7 @@ __decorate([
     __metadata("design:type", String)
 ], ExperienceCv.prototype, "description", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => cvSkill_1.SkillCv, (sk) => sk.parameter, { onDelete: 'CASCADE', }),
+    (0, typeorm_1.OneToMany)(() => cvSkill_1.SkillCv, (sk) => sk.experience, { cascade: true }),
     __metadata("design:type", Array)
 ], ExperienceCv.prototype, "skill", void 0);
 __decorate([

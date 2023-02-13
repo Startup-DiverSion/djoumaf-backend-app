@@ -38,10 +38,10 @@ export class Job {
     @Column({type: 'longtext'})
     description: any
 
-    @ManyToOne(() => User, (user) => user.job, {onDelete: 'CASCADE',})
+    @ManyToOne(() => User, (user) => user.job, {onDelete: 'CASCADE'})
     user: Profile
 
-    @ManyToOne(() => Profile, (profile) => profile.job, {onDelete: 'CASCADE',})
+    @ManyToOne(() => Profile, (profile) => profile.job, {onDelete: 'CASCADE'})
     profile: Profile
 
     @OneToMany(() => ToApplyJob, apply => apply.job, {cascade: true})

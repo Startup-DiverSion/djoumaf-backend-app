@@ -40,7 +40,7 @@ class AuthMailer {
                     email: receivers,
                 };
                 ejs.renderFile(path.join(__dirname, '../templates/auth/send_email_old_user.ejs'), data).then((result) => {
-                    (0, mailer_config_1.mailConfiguration)(receivers, '[DJOUMAF] Comfirmez votre adresse email', result);
+                    (0, mailer_config_1.mailConfiguration)(receivers, '[DJOUMAF] Ancien utilisateur', result);
                 });
             }
             catch (error) {

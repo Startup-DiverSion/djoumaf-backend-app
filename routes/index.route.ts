@@ -17,6 +17,8 @@ import to_applyController from "../controllers/to_apply.controller";
 import MediaController from "../controllers/media.controller";
 import TalkMailController from "../controllers/talk_mail.controller";
 import UserController from "../controllers/user.controller";
+import ProfileExperienceController from "../controllers/profile.experience.controller";
+import ProfileCourseController from "../controllers/profile.course.controller";
 
 
 /**
@@ -42,10 +44,20 @@ const Routes = (app: any) => {
 
    // All routes of profile CONTROLLER
    router.get('/profile', ProfileController.index);
+   router.get('/profile/particulier', ProfileController.particulier);
    router.post('/profile/show', ProfileController.show);
    router.post('/profile/show_slug', ProfileController.showWihSlug);
    router.post('/profile/update',ImageConfig.uploadFile().single("file"), ProfileController.update);
+   router.post('/profile/edit',ImageConfig.uploadFile().single("file"), ProfileController.updateOfProfile);
    router.delete('/profile/delete/:id',  wareVerifyTokenUser, ProfileController.delete);
+
+   // All routes of profile : Cv Experience CONTROLLER
+   router.get('/profile/experience', wareVerifyTokenUser, ProfileExperienceController.index);
+   router.post('/profile/experience/create', wareVerifyTokenUser, ProfileExperienceController.create);
+
+   // All routes of profile : Cv Course CONTROLLER
+   router.post('/profile/course', wareVerifyTokenUser, ProfileCourseController.index);
+   router.post('/profile/course/create', wareVerifyTokenUser, ProfileCourseController.create);
 
    // All users
    router.get('/user', UserController.index);

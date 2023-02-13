@@ -58,11 +58,11 @@ __decorate([
     __metadata("design:type", Object)
 ], Job.prototype, "description", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => user_1.User, (user) => user.job, { onDelete: 'CASCADE', }),
+    (0, typeorm_1.ManyToOne)(() => user_1.User, (user) => user.job, { onDelete: 'CASCADE' }),
     __metadata("design:type", userProfile_1.Profile)
 ], Job.prototype, "user", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => userProfile_1.Profile, (profile) => profile.job, { onDelete: 'CASCADE', }),
+    (0, typeorm_1.ManyToOne)(() => userProfile_1.Profile, (profile) => profile.job, { onDelete: 'CASCADE' }),
     __metadata("design:type", userProfile_1.Profile)
 ], Job.prototype, "profile", void 0);
 __decorate([

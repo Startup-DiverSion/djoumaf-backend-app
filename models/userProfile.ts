@@ -31,14 +31,26 @@ export class Profile {
     @Column({ nullable: true, type: "longtext"})
     description: any
 
-    @ManyToOne(() => Parameter, (pref) => pref.preference, {onDelete: 'CASCADE',})
-    type_user: Parameter
+    @ManyToOne(() => Parameter, (p) => p.profile, {onDelete: 'CASCADE',})
+    type: Parameter
+
+    @Column({ nullable: true, default: 65})
+    typeuser: Number
     
     @Column({ nullable: true})
-    born: Date
+    born: string
 
     @Column({ nullable: true})
     sex: string
+
+    @Column({ nullable: true})
+    contact: string
+
+    @Column({ nullable: true})
+    adresse: string
+
+      @Column({ nullable: true})
+      site_web: string
 
     @Column({ nullable: false, default: 0})
     lvl: number

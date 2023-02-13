@@ -14,6 +14,7 @@ const typeorm_1 = require("typeorm");
 const parameter_1 = require("./parameter");
 const user_1 = require("./user");
 const parameterType_1 = require("./parameterType");
+const cvExperience_1 = require("./cvExperience");
 let SkillCv = class SkillCv {
 };
 __decorate([
@@ -32,6 +33,10 @@ __decorate([
     (0, typeorm_1.ManyToOne)(() => user_1.User, (type) => type.preference, { onDelete: 'CASCADE', }),
     __metadata("design:type", user_1.User)
 ], SkillCv.prototype, "user", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => cvExperience_1.ExperienceCv, (type) => type.skill, { onDelete: 'CASCADE', }),
+    __metadata("design:type", cvExperience_1.ExperienceCv)
+], SkillCv.prototype, "experience", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)
