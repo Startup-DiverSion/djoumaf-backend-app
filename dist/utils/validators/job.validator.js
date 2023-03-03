@@ -7,6 +7,7 @@ class JobValidator {
     // 
     post(req) {
         const schema = Joi.object({
+            id: Joi.allow(),
             title: Joi.string().required(),
             field_activity: Joi.string().required(),
             work_place: Joi.string().required(),

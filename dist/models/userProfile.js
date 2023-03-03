@@ -43,11 +43,11 @@ __decorate([
     __metadata("design:type", String)
 ], Profile.prototype, "bio", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ nullable: true, type: "longtext" }),
+    (0, typeorm_1.Column)({ nullable: true, type: 'longtext' }),
     __metadata("design:type", Object)
 ], Profile.prototype, "description", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => parameter_1.Parameter, (p) => p.profile, { onDelete: 'CASCADE', }),
+    (0, typeorm_1.ManyToOne)(() => parameter_1.Parameter, (p) => p.profile, { onDelete: 'CASCADE' }),
     __metadata("design:type", parameter_1.Parameter)
 ], Profile.prototype, "type", void 0);
 __decorate([
@@ -108,6 +108,6 @@ __decorate([
     __metadata("design:type", Date)
 ], Profile.prototype, "deleted_at", void 0);
 Profile = __decorate([
-    (0, typeorm_1.Entity)("user_profiles")
+    (0, typeorm_1.Entity)('user_profiles')
 ], Profile);
 exports.Profile = Profile;

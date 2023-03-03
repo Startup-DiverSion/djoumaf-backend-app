@@ -17,6 +17,7 @@ import { SkillCv } from '../models/cvSkill';
 import { slugGetter } from './../utils/adv/slug';
 import { CourseCV } from '../models/cvCourse';
 import { Profile } from '../models/userProfile';
+import moment = require('moment');
 
 class ProfileCourseController {
    constructor() {}
@@ -26,22 +27,19 @@ class ProfileCourseController {
       try {
 
         // 
-        const {id } = req.body
+        const {user } = req.body
 
 
         // 
          const jProfileCourse = db.getRepository(CourseCV);
-         const relations = ['diploma'];
+         const jUser = db.getRepository(User)
+         
+         const getUser:any = await jUser.findOne({
+            where: {id: user}, relations: ['course', 'course.diploma'], select: ['course']
+         })
+         if (!getUser) return serverError.noDataMatches(res);
 
-        //  Get Current Profile
-         const { Auth } = await userServices.current(req, res);
-
-          // Get 
-          const getProfileCourse = await jProfileCourse.find({
-           where: {user: id}, relations
-          });
-
-         return res.send({ courses: getProfileCourse });
+         return res.send({ courses: getUser.course });
       } catch (error) {
          serverError.catchError(res, error);
       }
@@ -104,14 +102,24 @@ class ProfileCourseController {
             currently_working,
             description,
          });
-         const saveProfileCourse = await jProfileCourse.save(
+         const saveProfileCourse:any = await jProfileCourse.save(
             newProfileCourse
          );
          if (!saveProfileCourse)
             return serverError.notInsertToDatabase(res);
 
+            const getCourse = await jProfileCourse.findOne({where: {id: saveProfileCourse.id}, relations: {diploma: true}})
 
-         return res.status(201).send({courses: saveProfileCourse});
+            getCourse.date_start = moment(
+               getCourse.date_start
+         ).utc().format(' Y');
+         getCourse.date_finish =
+            !getCourse.currently_working
+               ? moment().utc().format(' Y')
+               : 'En cours';
+
+
+         return res.status(201).send({course: getCourse});
       } catch (error) {
          serverError.catchError(res, error);
       }
@@ -121,21 +129,82 @@ class ProfileCourseController {
    public async update(req: Request, res: Response) {
       try {
          // Init
-         let {} = req.body;
+         let {
+            id,
+            etablishment,
+            domain,
+            date_start,
+            date_finish,
+            diploma,
+            description,
+            work_place,
+            currently_working
+         } = req.body;
 
          // Initialize the user profile
          const jProfileCourse = db.getRepository(CourseCV);
-         const jMedia = db.getRepository(Media);
-         const jPreference = db.getRepository(Preference);
+         const jSkill = db.getRepository(SkillCv);
          const jParametre = db.getRepository(Parameter);
+         const { Auth } = await userServices.current(req, res);
+
+         const { jSlug } = await slugGetter(res, etablishment, CourseCV);
+
+         const updateProfileCourse = jProfileCourse.update({id},{
+            slug: jSlug,
+            user: Auth.user.id,
+            etablishment,
+            diploma,
+            domain,
+            date_start,
+            date_finish,
+            workplace: work_place,
+            currently_working,
+            description,
+         });
+         
+         if (!updateProfileCourse)
+            return serverError.notInsertToDatabase(res);
+
+            const getCourse = await jProfileCourse.findOne({where: {id}, relations: {diploma: true}})
+
+            getCourse.date_start = moment(
+               getCourse.date_start
+         ).format(' Y');
+         getCourse.date_finish =
+            !getCourse.currently_working
+               ? moment().format(' Y')
+               : 'En cours';
+
+
+         return res.status(201).send({course: getCourse});
       } catch (error) {
-         console.log(error);
          serverError.catchError(res, error);
       }
    }
 
    //
-   public async delete(req: Request, res: Response) {}
+   public async delete(req: Request, res: Response) {
+      try {
+         // Init
+         const jProfileCourse = db.getRepository(CourseCV);
+         const {id} = req.body;
+
+         // Verify is job exist in database
+         const isCourse = await jProfileCourse.findOne({ where: { id: id } });
+         if (!isCourse) return serverError.noDataMatches(res);
+
+         // Remove job
+         await jProfileCourse.softDelete({
+            id
+         });
+
+         return res
+            .status(201)
+            .send({ course: { message: 'Formation supprimer avec succès!' } });
+      } catch (error) {
+         return serverError.catchError(res, error);
+      }
+   }
 }
 
 export default new ProfileCourseController();

@@ -15,12 +15,12 @@ const wareVerifyTokenUser = (req, res, next) => __awaiter(void 0, void 0, void 0
     try {
         const { getTokenWebID, getTokenUser } = yield user_services_1.default.current(req, res);
         if (getTokenWebID.toLowerCase().trim() != getTokenUser.email)
-            return res.status(401).send({ message: "Accés interdit" });
+            return res.status(401).send({ message: 'Accés interdit' });
         next();
     }
     catch (error) {
         console.log(error);
-        res.status(401).send({ mesage: "invalid token", satut_code: 401 });
+        res.status(401).send({ mesage: 'invalid token', satut_code: 401 });
     }
 });
 exports.wareVerifyTokenUser = wareVerifyTokenUser;

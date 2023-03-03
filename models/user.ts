@@ -21,6 +21,9 @@ import { ToApplyJob } from './jobToApply';
 import { TalkMail } from './talkMail';
 import { Chat } from './chat';
 import { Follow } from './userFollow';
+import { ExperienceCv } from './cvExperience';
+import { CourseCV } from './cvCourse';
+import { ActivityLog } from './userActivityLog';
 
 @Entity('users')
 export class User {
@@ -64,7 +67,15 @@ export class User {
 
    @OneToMany(() => Preference, (preference) => preference.user, {cascade: true})
    preference: Preference;
-   
+
+   @OneToMany(() => ExperienceCv, (exp) => exp.user, {cascade: true})
+   experience: ExperienceCv;
+
+   @OneToMany(() => CourseCV, (course) => course.user, {cascade: true})
+   course: CourseCV;
+
+   @OneToMany(() => ActivityLog, (log) => log.user, {cascade: true})
+    activity_log: ActivityLog
 
    @Column({  nullable: true })
    rest_password_code: string;

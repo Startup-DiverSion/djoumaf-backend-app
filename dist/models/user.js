@@ -18,6 +18,9 @@ const userRole_1 = require("./userRole");
 const talkMail_1 = require("./talkMail");
 const chat_1 = require("./chat");
 const userFollow_1 = require("./userFollow");
+const cvExperience_1 = require("./cvExperience");
+const cvCourse_1 = require("./cvCourse");
+const userActivityLog_1 = require("./userActivityLog");
 let User = class User {
 };
 __decorate([
@@ -73,6 +76,18 @@ __decorate([
     (0, typeorm_1.OneToMany)(() => userPreference_1.Preference, (preference) => preference.user, { cascade: true }),
     __metadata("design:type", userPreference_1.Preference)
 ], User.prototype, "preference", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => cvExperience_1.ExperienceCv, (exp) => exp.user, { cascade: true }),
+    __metadata("design:type", cvExperience_1.ExperienceCv)
+], User.prototype, "experience", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => cvCourse_1.CourseCV, (course) => course.user, { cascade: true }),
+    __metadata("design:type", cvCourse_1.CourseCV)
+], User.prototype, "course", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => userActivityLog_1.ActivityLog, (log) => log.user, { cascade: true }),
+    __metadata("design:type", userActivityLog_1.ActivityLog)
+], User.prototype, "activity_log", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)

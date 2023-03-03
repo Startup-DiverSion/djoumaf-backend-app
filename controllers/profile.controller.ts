@@ -62,6 +62,8 @@ class ProfileController {
       }
    }
 
+
+
    public async particulier(req: Request, res: Response) {
       try {
          const JProfile = db.getRepository(Profile);
@@ -122,16 +124,15 @@ class ProfileController {
          const { slug } = req.body;
 
          // Get job data based on id
-         const getProfile = await jProfile.findOne({
+         const getProfile :any = await jProfile.findOne({
             where: { slug: slug },
-            relations: {
-               user: true,
-               media_profile: true,
-               media_profile_cover: true,
-            },
+            relations:['user', 'media_profile', 'media_profile_cover', 'job', 'job.to_apply'],
          });
-         if (!getProfile) return serverError.noDataMatches(res);
-         console.log(getProfile);
+
+         getProfile.job.forEach((el:any) => {
+            el.to_apply = el.to_apply.length
+         });
+        
 
          // Return Data
          return res.status(201).send({ profile: getProfile });
@@ -189,38 +190,16 @@ class ProfileController {
          let slugExist: any;
          let slug: string;
 
-         do {
-            // Defined the letter associated
-            const letter = 'd j o u m a f'.split(' ');
-            const letterRamdom = Math.floor(Math.random() * letter.length);
+     
 
-            // Defined the slug of profile
-            slug = `${slugify(full_name, '_')}_${Math.floor(
-               Math.random() * 10000
-            )}${letter[letterRamdom]}`.toLowerCase();
+         const {jSlug} = await slugGetter(res, full_name, Profile)
+         slug = jSlug
 
-            // Get profile
-            slugExist = await db
-               .getRepository(Profile)
-               .findOne({ where: { slug } });
-            if (slugExist)
-               return useValidateError.withoutInput(res, {
-                  message: 'slug est dèja utiliser !',
-                  path: 'all',
-               });
-         } while (slugExist);
+       
 
          // Add image to profile
-         await MediaController.create(req, res, id);
-         // if (req.file) {
-         //    const newMedia = jMedia.create({
-         //       url: req.file,
-         //       profile: id,
-         //    });
-
-         //    const saveMedia = await jMedia.save(newMedia);
-         //    if (!saveMedia) return serverError.notInsertToDatabase(res);
-         // }
+         MediaController.create(req, res, id);
+        
 
          // Add preference of profile
          preferenceID = JSON.parse(preferenceID)?.pref;
@@ -252,7 +231,7 @@ class ProfileController {
                first_name,
                last_name,
                type: type_user,
-               typeuser: type_user.id,
+               typeuser: type_user,
                full_name,
                description,
                slug,
@@ -262,9 +241,13 @@ class ProfileController {
          );
          if (!updateProfile) return serverError.notInsertToDatabase(res);
 
+         const getProfile:any = await db
+         .getRepository(Profile)
+         .findOne({ where: { id }});
+
          const xUser = await db
             .getRepository(User)
-            .findOne({ where: { profile: id }, relations: { profile: true } });
+            .findOne({ where: { profile: getProfile?.id } });
          if (!xUser) return serverError.noDataMatches(res);
 
          return res.send({ user: xUser });
@@ -317,11 +300,45 @@ class ProfileController {
          if (!updateProfile) return serverError.notInsertToDatabase(res);
 
          const xUser = await db
-            .getRepository(User)
-            .findOne({ where: { profile: id }, relations: { profile: true } });
+            .getRepository(Profile)
+            .findOne({ where: { id }, relations: ['user', 'media_profile', 'media_profile_cover'] });
          if (!xUser) return serverError.noDataMatches(res);
 
          return res.send({ profile: xUser });
+      } catch (error) {
+         console.log(error);
+         serverError.catchError(res, error);
+      }
+   }
+
+   public async updateDescription(req: Request, res: Response) {
+      try {
+         // Init
+         let {
+            id,
+            description,
+         } = req.body;
+
+         // Initialize the user profile
+         const jProfile = db.getRepository(Profile);
+         const jMedia = db.getRepository(Media);
+         const jPreference = db.getRepository(Preference);
+         const jParametre = db.getRepository(Parameter);
+
+         let updateProfileDescription = jProfile.update(
+            { id: id },
+            {
+               description
+            }
+         );
+         if (!updateProfileDescription) return serverError.notInsertToDatabase(res);
+
+         const xUser = await db
+            .getRepository(Profile)
+            .findOne({ where: { id }, relations: ['user', 'media_profile', 'media_profile_cover'] });
+         if (!xUser) return serverError.noDataMatches(res);
+
+         return res.send({ description: xUser.description });
       } catch (error) {
          console.log(error);
          serverError.catchError(res, error);

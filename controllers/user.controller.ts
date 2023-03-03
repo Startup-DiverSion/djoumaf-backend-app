@@ -13,49 +13,41 @@ class UserController {
    public async index(req: Request, res: Response) {
       try {
          const query: any = req.query;
-         
-         const jUser = db.getRepository(User)
+
+         const jUser = db.getRepository(User);
          let getAllUser: any = [];
 
-    //    Limit
-  console.log(query.limit)
-            if(query.limit && query.limit >= 0){
-                const limit  = parseInt(query.limit)
-                 getAllUser = await jUser.find({take: query.limit})
-                 return res.send({ parameter: getAllUser });
+         //    Limit
 
-            }
+         if (query.limit && query.limit >= 0) {
+            const limit = parseInt(query.limit);
+            getAllUser = await jUser.find({ take: query.limit });
+            return res.send({ parameter: getAllUser });
+         }
 
-       
-
-            getAllUser = await jUser.find()
-                 return res.send({ users: getAllUser });
-        
+         getAllUser = await jUser.find();
+         return res.send({ users: getAllUser });
       } catch (error) {
          console.log(error);
       }
    }
 
+   //
+   public async indexQuery(req: Request, res: Response) {
+      try {
+         const query: any = req.query.type_parametre;
 
-      //
-      public async indexQuery(req: Request, res: Response) {
-         try {
-            const query: any = req.query.type_parametre;
+         // if(!query) return useValidateError.withoutInput(res)
 
-            // if(!query) return useValidateError.withoutInput(res)
+         const xParametre = await db
+            .getRepository(Parameter)
+            .find({ relations: { type_parameter: true } });
 
-            const xParametre = await db
-               .getRepository(Parameter)
-               .find({ relations: { type_parameter: true } });
-   
-          
-   
-               return res.send({ parameter: xParametre });
-           
-         } catch (error) {
-            console.log(error);
-         }
+         return res.send({ parameter: xParametre });
+      } catch (error) {
+         console.log(error);
       }
+   }
 
    //
    public async show(req: Request, res: Response) {}
@@ -64,12 +56,7 @@ class UserController {
    public async create(req: Request, res: Response, profileID: any) {
       try {
          // Init
-       
-
          // Initialize the user profile
-       
-
-       
       } catch (error) {
          serverError.catchError(res, error);
       }

@@ -20,17 +20,19 @@ class TalkMailController {
    public async index(req: Request, res: Response) {
       // Init
       const jTalkMail = db.getRepository(TalkMail);
-
+      const { Auth } = await userServices.current(req, res);
+      console.log(Auth)
       // Get the informations entry request
 
       // Get job data based on id
-      const getAll = await jTalkMail.find({
+      const getAll = await jTalkMail.find({where: {to: Auth.user.email},
          relations: ['user', 'user.profile.media_profile', 'receiver'],
       });
-      if (!getAll) return serverError.noDataMatches(res);
+      
+     
 
       // Return Data
-      return res.status(201).send({ talk_mails: getAll });
+      return res.status(201).send({ talk_mails: getAll, Auth });
    }
 
    public async show(req: Request, res: Response) {
@@ -100,6 +102,7 @@ class TalkMailController {
       // Create
       const newTalkMail = jTalkMail.create({
          from: Auth.user.email,
+         to: receiver.email,
          sign: xSignMail,
          subject,
          message,
@@ -140,13 +143,13 @@ class TalkMailController {
 
       // Get job data based on id
       const getAll = await jTalkMail.find({
-         where: { user: Auth.user.id },
+         where: { to: Auth.user.email },
          relations: ['user', 'user.profile.media_profile', 'user'],
       });
       if (!getAll) return serverError.noDataMatches(res);
 
       // Return Data
-      return res.status(201).send({ talk_mails: getAll });
+      return res.status(201).send({ talk_mails: getAll, Auth });
    }
 
    /** */
@@ -171,6 +174,46 @@ class TalkMailController {
 
       // Return Data
       return res.status(201).send({ talk_mails: getAll });
+   }
+
+   // Defined state of condidacy
+   public async candidacy_state(req: Request, res: Response) {
+
+      try {
+         const { id, state } =req.body
+         const jCandidacy = db.getRepository(TalkMail)
+
+         // Update
+         const updateCondidacy = jCandidacy.update({id}, {
+            candidacy_state: state
+         })
+
+         return res.send({id})
+         
+      } catch (error) {
+         serverError.catchError(res, error);
+      }
+
+   }
+
+    // Defined state of candidacy
+    public async candidacy_see_profile(req: Request, res: Response) {
+
+      try {
+         const { id } = req.body
+         const jCandidacy = db.getRepository(TalkMail)
+
+         // Update
+         const updateCondidacy = jCandidacy.update({id}, {
+            candidacy_see_profile: true
+         })
+
+         return res.send({id})
+         
+      } catch (error) {
+         serverError.catchError(res, error);
+      }
+
    }
 }
 

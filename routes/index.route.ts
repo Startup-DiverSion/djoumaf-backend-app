@@ -19,6 +19,7 @@ import TalkMailController from "../controllers/talk_mail.controller";
 import UserController from "../controllers/user.controller";
 import ProfileExperienceController from "../controllers/profile.experience.controller";
 import ProfileCourseController from "../controllers/profile.course.controller";
+import activity_logController from "../controllers/activity_log.controller";
 
 
 /**
@@ -33,8 +34,10 @@ const Routes = (app: any) => {
       res.json({ msg: 'WHOAH with CORS it works! 🔝 🎉' })
     })
 
+    router.get('/test', activity_logController.index);
+
    // ALL ROUTES OF AUTH CONTROLLER
-   router.get('/auth', new SendEmailToOldUser().create_user)
+   // router.get('/auth', new SendEmailToOldUser().create_user)
    router.post('/auth/register', AuthController.register);
    router.post('/auth/password/verify-email', AuthController.forgetPassword_verifyMail);
    router.post('/auth/password/verify-code', AuthController.forgetPassword_verifyCode);
@@ -47,17 +50,26 @@ const Routes = (app: any) => {
    router.get('/profile/particulier', ProfileController.particulier);
    router.post('/profile/show', ProfileController.show);
    router.post('/profile/show_slug', ProfileController.showWihSlug);
-   router.post('/profile/update',ImageConfig.uploadFile().single("file"), ProfileController.update);
-   router.post('/profile/edit',ImageConfig.uploadFile().single("file"), ProfileController.updateOfProfile);
+   router.post('/profile/update',wareVerifyTokenUser, ImageConfig.uploadFile().single("file"), ProfileController.update);
+   router.post('/profile/edit',wareVerifyTokenUser, ProfileController.updateOfProfile);
+   router.post('/profile/description/edit', wareVerifyTokenUser, ProfileController.updateDescription);
    router.delete('/profile/delete/:id',  wareVerifyTokenUser, ProfileController.delete);
 
    // All routes of profile : Cv Experience CONTROLLER
-   router.get('/profile/experience', wareVerifyTokenUser, ProfileExperienceController.index);
+   router.post('/profile/experience', ProfileExperienceController.index);
    router.post('/profile/experience/create', wareVerifyTokenUser, ProfileExperienceController.create);
+   router.post('/profile/experience/update', wareVerifyTokenUser, ProfileExperienceController.update);
+   router.post('/profile/experience/delete', wareVerifyTokenUser, ProfileExperienceController.delete);
 
    // All routes of profile : Cv Course CONTROLLER
-   router.post('/profile/course', wareVerifyTokenUser, ProfileCourseController.index);
+   router.post('/profile/course', ProfileCourseController.index);
    router.post('/profile/course/create', wareVerifyTokenUser, ProfileCourseController.create);
+   router.post('/profile/course/update', wareVerifyTokenUser, ProfileCourseController.update);
+   router.post('/profile/course/delete', wareVerifyTokenUser, ProfileCourseController.delete);
+
+   // All routes : CANDIDACY
+   router.post('/profile/candidacy/see', TalkMailController.candidacy_see_profile);
+   router.post('/profile/candidacy/state', TalkMailController.candidacy_state);
 
    // All users
    router.get('/user', UserController.index);
@@ -68,12 +80,16 @@ const Routes = (app: any) => {
    // ALL ROUTES OF PARAMETRE CONTROLLER
    router.get('/parameter', ParameterController.index);
 
+   //Activity log
+   router.get('/activity_log', wareVerifyTokenUser, activity_logController.index);
+
 
    // ALL ROUTES OF job CONTROLLER
    router.get('/job', JobController.index);
    router.post('/job/show', JobController.show);
    router.post('/job/create',  wareVerifyTokenUser,  JobController.create);
-   router.delete('/job/delete/:id',  wareVerifyTokenUser, JobController.delete);
+   router.post('/job/update',  wareVerifyTokenUser,  JobController.update);
+   router.post('/job/delete',  wareVerifyTokenUser, JobController.delete);
    /* Job Apply */
    router.post('/job/apply/create', wareVerifyTokenUser, to_applyController.create);
    router.post('/job/apply/show', to_applyController.show);

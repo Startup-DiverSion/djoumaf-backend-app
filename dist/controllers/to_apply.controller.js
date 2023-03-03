@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const index_database_1 = require("../database/index.database");
 const server_error_1 = require("../utils/err/server.error");
+const jobs_1 = require("../models/jobs");
 const jobToApply_1 = require("../models/jobToApply");
 const user_services_1 = require("../services/user.services");
 const talk_mail_controller_1 = require("./talk_mail.controller");
@@ -65,10 +66,14 @@ class ToApplyController {
                 // Initialize
                 const jToApply = index_database_1.db.getRepository(jobToApply_1.ToApplyJob);
                 const jUser = index_database_1.db.getRepository(user_1.User);
+                const jJob = index_database_1.db.getRepository(jobs_1.Job);
                 const { Auth } = yield user_services_1.default.current(req, res);
                 //Get first apply  > User and Job
                 const ifAllwaysApply = yield jToApply.findOne({
                     where: [{ user_id: Auth.user.id, job_id: jobID }],
+                });
+                const getJobOne = yield jJob.findOne({
+                    where: [{ id: jobID }],
                 });
                 // Verify if user allways to apply on post
                 if (ifAllwaysApply) {
@@ -106,7 +111,7 @@ class ToApplyController {
                 // Send DjMail to notified the apply user
                 const { saveTalkMail } = yield talk_mail_controller_1.default.create(req, res, {
                     receiver: userOwnerOfPost,
-                    subject: `Vous avez recu une nouvelle condidacture.`,
+                    subject: getJobOne.title,
                     message: `
                <h1>Hello ${userOwnerOfPost.profile.first_name}</h1>
                <a href="#">Voir son profile</a>

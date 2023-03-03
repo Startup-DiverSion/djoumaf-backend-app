@@ -30,7 +30,6 @@ class ToApplyController {
          // Initialize
 
          // Get by specific selection one Apply data
-      
 
          const getToApply = userID
             ? await jToApply.findOne({
@@ -62,11 +61,16 @@ class ToApplyController {
          // Initialize
          const jToApply = db.getRepository(ToApplyJob);
          const jUser = db.getRepository(User);
+         const jJob = db.getRepository(Job)
          const { Auth } = await userServices.current(req, res);
 
          //Get first apply  > User and Job
          const ifAllwaysApply: any = await jToApply.findOne({
             where: [{ user_id: Auth.user.id, job_id: jobID }],
+         });
+
+         const getJobOne: any = await jJob.findOne({
+            where: [{ id: jobID }],
          });
 
          // Verify if user allways to apply on post
@@ -112,7 +116,7 @@ class ToApplyController {
          // Send DjMail to notified the apply user
          const { saveTalkMail } = await TalkMailController.create(req, res, {
             receiver: userOwnerOfPost,
-            subject: `Vous avez recu une nouvelle condidacture.`,
+            subject: getJobOne.title,
             message: `
                <h1>Hello ${userOwnerOfPost.profile.first_name}</h1>
                <a href="#">Voir son profile</a>

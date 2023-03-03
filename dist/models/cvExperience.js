@@ -57,7 +57,7 @@ __decorate([
     __metadata("design:type", Array)
 ], ExperienceCv.prototype, "skill", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => user_1.User, (user) => user.profile, { onDelete: 'CASCADE', }),
+    (0, typeorm_1.ManyToOne)(() => user_1.User, (user) => user.experience, { onDelete: 'CASCADE', }),
     __metadata("design:type", user_1.User)
 ], ExperienceCv.prototype, "user", void 0);
 __decorate([

@@ -13,10 +13,8 @@ const index_database_1 = require("../database/index.database");
 const userProfile_1 = require("../models/userProfile");
 const server_error_1 = require("../utils/err/server.error");
 const user_1 = require("../models/user");
-const input_error_1 = require("../utils/err/input.error");
 const mediaUserProfile_1 = require("../models/mediaUserProfile");
 const userPreference_1 = require("../models/userPreference");
-const slugify_1 = require("slugify");
 const parameter_1 = require("../models/parameter");
 const media_controller_1 = require("./media.controller");
 const typeorm_1 = require("typeorm");
@@ -129,15 +127,11 @@ class ProfileController {
                 // Get job data based on id
                 const getProfile = yield jProfile.findOne({
                     where: { slug: slug },
-                    relations: {
-                        user: true,
-                        media_profile: true,
-                        media_profile_cover: true,
-                    },
+                    relations: ['user', 'media_profile', 'media_profile_cover', 'job', 'job.to_apply'],
                 });
-                if (!getProfile)
-                    return server_error_1.default.noDataMatches(res);
-                console.log(getProfile);
+                getProfile.job.forEach((el) => {
+                    el.to_apply = el.to_apply.length;
+                });
                 // Return Data
                 return res.status(201).send({ profile: getProfile });
             }
@@ -185,32 +179,10 @@ class ProfileController {
                 const full_name = last_name + ' ' + first_name;
                 let slugExist;
                 let slug;
-                do {
-                    // Defined the letter associated
-                    const letter = 'd j o u m a f'.split(' ');
-                    const letterRamdom = Math.floor(Math.random() * letter.length);
-                    // Defined the slug of profile
-                    slug = `${(0, slugify_1.default)(full_name, '_')}_${Math.floor(Math.random() * 10000)}${letter[letterRamdom]}`.toLowerCase();
-                    // Get profile
-                    slugExist = yield index_database_1.db
-                        .getRepository(userProfile_1.Profile)
-                        .findOne({ where: { slug } });
-                    if (slugExist)
-                        return input_error_1.default.withoutInput(res, {
-                            message: 'slug est dèja utiliser !',
-                            path: 'all',
-                        });
-                } while (slugExist);
+                const { jSlug } = yield (0, slug_1.slugGetter)(res, full_name, userProfile_1.Profile);
+                slug = jSlug;
                 // Add image to profile
-                yield media_controller_1.default.create(req, res, id);
-                // if (req.file) {
-                //    const newMedia = jMedia.create({
-                //       url: req.file,
-                //       profile: id,
-                //    });
-                //    const saveMedia = await jMedia.save(newMedia);
-                //    if (!saveMedia) return serverError.notInsertToDatabase(res);
-                // }
+                media_controller_1.default.create(req, res, id);
                 // Add preference of profile
                 preferenceID = (_a = JSON.parse(preferenceID)) === null || _a === void 0 ? void 0 : _a.pref;
                 for (let i = 0; i < preferenceID.length; i++) {
@@ -236,7 +208,7 @@ class ProfileController {
                     first_name,
                     last_name,
                     type: type_user,
-                    typeuser: type_user.id,
+                    typeuser: type_user,
                     full_name,
                     description,
                     slug,
@@ -245,9 +217,12 @@ class ProfileController {
                 });
                 if (!updateProfile)
                     return server_error_1.default.notInsertToDatabase(res);
+                const getProfile = yield index_database_1.db
+                    .getRepository(userProfile_1.Profile)
+                    .findOne({ where: { id } });
                 const xUser = yield index_database_1.db
                     .getRepository(user_1.User)
-                    .findOne({ where: { profile: id }, relations: { profile: true } });
+                    .findOne({ where: { profile: getProfile === null || getProfile === void 0 ? void 0 : getProfile.id } });
                 if (!xUser)
                     return server_error_1.default.noDataMatches(res);
                 return res.send({ user: xUser });
@@ -285,11 +260,39 @@ class ProfileController {
                 if (!updateProfile)
                     return server_error_1.default.notInsertToDatabase(res);
                 const xUser = yield index_database_1.db
-                    .getRepository(user_1.User)
-                    .findOne({ where: { profile: id }, relations: { profile: true } });
+                    .getRepository(userProfile_1.Profile)
+                    .findOne({ where: { id }, relations: ['user', 'media_profile', 'media_profile_cover'] });
                 if (!xUser)
                     return server_error_1.default.noDataMatches(res);
                 return res.send({ profile: xUser });
+            }
+            catch (error) {
+                console.log(error);
+                server_error_1.default.catchError(res, error);
+            }
+        });
+    }
+    updateDescription(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                // Init
+                let { id, description, } = req.body;
+                // Initialize the user profile
+                const jProfile = index_database_1.db.getRepository(userProfile_1.Profile);
+                const jMedia = index_database_1.db.getRepository(mediaUserProfile_1.Media);
+                const jPreference = index_database_1.db.getRepository(userPreference_1.Preference);
+                const jParametre = index_database_1.db.getRepository(parameter_1.Parameter);
+                let updateProfileDescription = jProfile.update({ id: id }, {
+                    description
+                });
+                if (!updateProfileDescription)
+                    return server_error_1.default.notInsertToDatabase(res);
+                const xUser = yield index_database_1.db
+                    .getRepository(userProfile_1.Profile)
+                    .findOne({ where: { id }, relations: ['user', 'media_profile', 'media_profile_cover'] });
+                if (!xUser)
+                    return server_error_1.default.noDataMatches(res);
+                return res.send({ description: xUser.description });
             }
             catch (error) {
                 console.log(error);

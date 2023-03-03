@@ -173,7 +173,7 @@ class AuthController {
                 // We verify is email exist in database
                 const user = yield index_database_1.db
                     .getRepository(user_1.User)
-                    .findOne({ where: { email } });
+                    .findOne({ where: { email }, relations: { profile: true } });
                 if (!user)
                     return input_error_1.default.withoutInput(res, {
                         message: "Ce email n'exist pas.",
@@ -191,8 +191,9 @@ class AuthController {
                         verify_code_expire: moment().utc().add(30, 'minutes').toISOString(),
                         rest_password_code: code,
                     });
+                    console.log(email);
                     if (result)
-                        yield auth_mailer_1.default.sendMailTochangePassword(email, user.username, code);
+                        yield auth_mailer_1.default.sendMailTochangePassword(email, user.profile.full_name, code);
                 }
                 res.status(201).send({ message: 'Email envoyer avec succès !' });
             }

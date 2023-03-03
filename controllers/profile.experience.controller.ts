@@ -16,6 +16,7 @@ import { ExperienceCv } from '../models/cvExperience';
 import userServices from '../services/user.services';
 import { SkillCv } from '../models/cvSkill';
 import { slugGetter } from './../utils/adv/slug';
+import moment = require('moment');
 
 class ProfileExperienceController {
    constructor() {}
@@ -23,17 +24,27 @@ class ProfileExperienceController {
    //
    public async index(req: Request, res: Response) {
       try {
+         const { user } = req.body;
+
          const jProfileExperience = db.getRepository(ExperienceCv);
+         const jUser = db.getRepository(User);
          const relations = ['skill', 'skill.parameter', 'type_contract'];
-         const { Auth } = await userServices.current(req, res);
 
-          // Get 
-          const getProfileExperience = await jProfileExperience.find({
-           where: {user: Auth.user.id}, relations
-          });
+         const getUser: any = await jUser.findOne({
+            where: { id: user },
+            relations: [
+               'experience',
+               'experience.skill',
+               'experience.skill.parameter',
+               'experience.type_contract',
+            ],
+            select: ['experience'],
+         });
+         if (!getUser) return serverError.noDataMatches(res);
 
-         return res.send({ experiences: getProfileExperience });
+         return res.send({ experiences: getUser.experience });
       } catch (error) {
+         console.log(error);
          serverError.catchError(res, error);
       }
    }
@@ -72,7 +83,7 @@ class ProfileExperienceController {
             work_place,
             description,
             skills,
-            currently_working
+            currently_working,
          } = req.body;
 
          // Initialize the user profile
@@ -121,7 +132,15 @@ class ProfileExperienceController {
             if (!savePreference) return serverError.notInsertToDatabase(res);
          }
 
-         return res.status(201).send({experiences: saveProfileExperience});
+         saveProfileExperience.date_start = moment(
+            saveProfileExperience.date_start
+         ).format('MMMM Y');
+         saveProfileExperience.date_finish =
+            !saveProfileExperience.currently_working
+               ? moment().format('MMMM Y')
+               : 'En cours';
+
+         return res.status(201).send({ experience: saveProfileExperience });
       } catch (error) {
          serverError.catchError(res, error);
       }
@@ -131,13 +150,94 @@ class ProfileExperienceController {
    public async update(req: Request, res: Response) {
       try {
          // Init
-         let {} = req.body;
+         let {
+            id,
+            type_experience,
+            company,
+            date_start,
+            date_finish,
+            work_place,
+            description,
+            skills,
+            currently_working,
+         } = req.body;
 
          // Initialize the user profile
          const jProfileExperience = db.getRepository(ExperienceCv);
-         const jMedia = db.getRepository(Media);
-         const jPreference = db.getRepository(Preference);
+         const jSkill = db.getRepository(SkillCv);
          const jParametre = db.getRepository(Parameter);
+         const { Auth } = await userServices.current(req, res);
+
+         const updateProfile = await jProfileExperience.update(
+            { id },
+            {
+               id,
+               company_name: company,
+               type_contract: type_experience,
+               date_start,
+               date_finish,
+               workplace: work_place,
+               currently_working,
+               description,
+            }
+         );
+         const getProfileExperience: any = await jProfileExperience.findOne({
+            where: { id },
+            relations: ['skill', 'skill.parameter', 'type_contract'],
+         });
+
+         if (!getProfileExperience) return serverError.notInsertToDatabase(res);
+
+         // Get all skill
+         const getAllSkill = await jSkill.find({
+            relations: { user: true, experience: true },
+         });
+
+         for (let i = 0; i < getAllSkill.length; i++) {
+            const el: any = getAllSkill[i];
+            if (
+               el.user.id === Auth.user.id &&
+               el.experience.id === getProfileExperience.id
+            ) {
+               await jSkill.delete({ id: el.id });
+            }
+         }
+
+         // Add competance of Experience
+         let competance = skills;
+         for (let i = 0; i < competance.length; i++) {
+            const el = competance[i];
+            const parameter = await jParametre.findOne({
+               where: { id: el.id },
+               relations: { type_parameter: true },
+            });
+
+            const newSkill = jSkill.create({
+               parameter: el.id,
+               user: Auth.user,
+               parent: parameter.type_parameter,
+               experience: getProfileExperience,
+            });
+            const savePreference = await jSkill.save(newSkill);
+            if (!savePreference) return serverError.notInsertToDatabase(res);
+         }
+
+         
+
+         const getOneProfileExperience: any = await jProfileExperience.findOne({
+            where: { id },
+            relations: ['skill', 'skill.parameter', 'type_contract'],
+         });
+
+         getOneProfileExperience.date_start = moment(
+            getOneProfileExperience.date_start
+         ).format('MMMM Y');
+         getOneProfileExperience.date_finish =
+            !getOneProfileExperience.currently_working
+               ? moment().format('MMMM Y')
+               : 'En cours';
+
+         return res.status(201).send({ experience: getOneProfileExperience });
       } catch (error) {
          console.log(error);
          serverError.catchError(res, error);
@@ -145,7 +245,28 @@ class ProfileExperienceController {
    }
 
    //
-   public async delete(req: Request, res: Response) {}
+   public async delete(req: Request, res: Response) {
+      try {
+         // Init
+         const jProfileExperience = db.getRepository(ExperienceCv);
+         const {id} = req.body;
+
+         // Verify is job exist in database
+         const isExperience = await jProfileExperience.findOne({ where: { id: id } });
+         if (!isExperience) return serverError.noDataMatches(res);
+
+         // Remove
+         await jProfileExperience.softDelete({
+            id
+         });
+
+         return res
+            .status(201)
+            .send({ experience: { message: 'Experience supprimer avec succès!' } });
+      } catch (error) {
+         return serverError.catchError(res, error);
+      }
+   }
 }
 
 export default new ProfileExperienceController();

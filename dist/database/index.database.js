@@ -23,6 +23,7 @@ const talkMail_1 = require("../models/talkMail");
 const chat_1 = require("../models/chat");
 const env_config_1 = require("../config/env.config");
 const userFollow_1 = require("../models/userFollow");
+const userActivityLog_1 = require("../models/userActivityLog");
 exports.db = new typeorm_1.DataSource({
     type: 'mysql',
     host: env_config_1.env.HOST,
@@ -50,7 +51,8 @@ exports.db = new typeorm_1.DataSource({
         cvSkill_1.SkillCv,
         talkMail_1.TalkMail,
         chat_1.Chat,
-        userFollow_1.Follow
+        userFollow_1.Follow,
+        userActivityLog_1.ActivityLog
     ],
     migrations: ['migration/*.js'],
     logging: false,

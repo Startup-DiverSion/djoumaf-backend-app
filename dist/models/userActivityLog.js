@@ -9,65 +9,53 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TalkMail = void 0;
+exports.ActivityLog = void 0;
 const typeorm_1 = require("typeorm");
 const user_1 = require("./user");
-const chat_1 = require("./chat");
-let TalkMail = class TalkMail {
+const parameter_1 = require("./parameter");
+let ActivityLog = class ActivityLog {
 };
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)(),
     __metadata("design:type", Number)
-], TalkMail.prototype, "id", void 0);
+], ActivityLog.prototype, "id", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], TalkMail.prototype, "subject", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ nullable: true }),
-    __metadata("design:type", Boolean)
-], TalkMail.prototype, "candidacy_state", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ default: 0 }),
-    __metadata("design:type", Boolean)
-], TalkMail.prototype, "candidacy_see_profile", void 0);
+], ActivityLog.prototype, "source", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], TalkMail.prototype, "from", void 0);
+], ActivityLog.prototype, "title", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], TalkMail.prototype, "to", void 0);
+], ActivityLog.prototype, "tag", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)((type) => user_1.User, (user) => user.chats, { onDelete: 'CASCADE', }),
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", Number)
+], ActivityLog.prototype, "source_id", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => parameter_1.Parameter, (params) => params.activity_log, { onDelete: 'CASCADE', }),
+    __metadata("design:type", parameter_1.Parameter)
+], ActivityLog.prototype, "log_status", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => user_1.User, (user) => user.activity_log, { onDelete: 'CASCADE', }),
     __metadata("design:type", user_1.User)
-], TalkMail.prototype, "user", void 0);
-__decorate([
-    (0, typeorm_1.ManyToOne)((type) => chat_1.Chat, (chat) => chat.message, { onDelete: 'CASCADE', }),
-    __metadata("design:type", chat_1.Chat)
-], TalkMail.prototype, "chat", void 0);
-__decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", String)
-], TalkMail.prototype, "message", void 0);
-__decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", String)
-], TalkMail.prototype, "sign", void 0);
+], ActivityLog.prototype, "user", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)
-], TalkMail.prototype, "created_at", void 0);
+], ActivityLog.prototype, "created_at", void 0);
 __decorate([
     (0, typeorm_1.UpdateDateColumn)(),
     __metadata("design:type", Date)
-], TalkMail.prototype, "updated_at", void 0);
+], ActivityLog.prototype, "updated_at", void 0);
 __decorate([
     (0, typeorm_1.DeleteDateColumn)(),
     __metadata("design:type", Date)
-], TalkMail.prototype, "deleted_at", void 0);
-TalkMail = __decorate([
-    (0, typeorm_1.Entity)('talk_mail')
-], TalkMail);
-exports.TalkMail = TalkMail;
+], ActivityLog.prototype, "deleted_at", void 0);
+ActivityLog = __decorate([
+    (0, typeorm_1.Entity)("user_activity_log")
+], ActivityLog);
+exports.ActivityLog = ActivityLog;

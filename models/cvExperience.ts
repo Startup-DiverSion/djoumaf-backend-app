@@ -38,7 +38,7 @@ export class ExperienceCv {
     @OneToMany(() => SkillCv, (sk) => sk.experience, {cascade: true})
     skill: SkillCv[]
 
-    @ManyToOne(() => User, (user) => user.profile, {onDelete: 'CASCADE',})
+    @ManyToOne(() => User, (user) => user.experience, {onDelete: 'CASCADE',})
     user: User
 
     @CreateDateColumn()

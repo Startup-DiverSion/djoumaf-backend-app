@@ -22,15 +22,15 @@ class TalkMailController {
         return __awaiter(this, void 0, void 0, function* () {
             // Init
             const jTalkMail = index_database_1.db.getRepository(talkMail_1.TalkMail);
+            const { Auth } = yield user_services_1.default.current(req, res);
+            console.log(Auth);
             // Get the informations entry request
             // Get job data based on id
-            const getAll = yield jTalkMail.find({
+            const getAll = yield jTalkMail.find({ where: { to: Auth.user.email },
                 relations: ['user', 'user.profile.media_profile', 'receiver'],
             });
-            if (!getAll)
-                return server_error_1.default.noDataMatches(res);
             // Return Data
-            return res.status(201).send({ talk_mails: getAll });
+            return res.status(201).send({ talk_mails: getAll, Auth });
         });
     }
     show(req, res) {
@@ -87,6 +87,7 @@ class TalkMailController {
             // Create
             const newTalkMail = jTalkMail.create({
                 from: Auth.user.email,
+                to: receiver.email,
                 sign: xSignMail,
                 subject,
                 message,
@@ -117,13 +118,13 @@ class TalkMailController {
             const { Auth } = yield user_services_1.default.current(req, res);
             // Get job data based on id
             const getAll = yield jTalkMail.find({
-                where: { user: Auth.user.id },
+                where: { to: Auth.user.email },
                 relations: ['user', 'user.profile.media_profile', 'user'],
             });
             if (!getAll)
                 return server_error_1.default.noDataMatches(res);
             // Return Data
-            return res.status(201).send({ talk_mails: getAll });
+            return res.status(201).send({ talk_mails: getAll, Auth });
         });
     }
     /** */
@@ -146,6 +147,40 @@ class TalkMailController {
                 return server_error_1.default.noDataMatches(res);
             // Return Data
             return res.status(201).send({ talk_mails: getAll });
+        });
+    }
+    // Defined state of condidacy
+    candidacy_state(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { id, state } = req.body;
+                const jCandidacy = index_database_1.db.getRepository(talkMail_1.TalkMail);
+                // Update
+                const updateCondidacy = jCandidacy.update({ id }, {
+                    candidacy_state: state
+                });
+                return res.send({ id });
+            }
+            catch (error) {
+                server_error_1.default.catchError(res, error);
+            }
+        });
+    }
+    // Defined state of candidacy
+    candidacy_see_profile(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { id } = req.body;
+                const jCandidacy = index_database_1.db.getRepository(talkMail_1.TalkMail);
+                // Update
+                const updateCondidacy = jCandidacy.update({ id }, {
+                    candidacy_see_profile: true
+                });
+                return res.send({ id });
+            }
+            catch (error) {
+                server_error_1.default.catchError(res, error);
+            }
         });
     }
 }

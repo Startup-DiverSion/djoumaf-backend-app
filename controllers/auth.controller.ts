@@ -179,7 +179,7 @@ class AuthController {
          // We verify is email exist in database
          const user = await db
             .getRepository(User)
-            .findOne({ where: { email } });
+            .findOne({ where: { email }, relations: {profile: true} });
          if (!user)
             return useValidateError.withoutInput(res, {
                message: "Ce email n'exist pas.",
@@ -202,11 +202,11 @@ class AuthController {
                   rest_password_code: code,
                }
             );
-
+               console.log(email)
             if (result)
                await authMailer.sendMailTochangePassword(
                   email,
-                  user.username,
+                  user.profile.full_name,
                   code
                );
          }

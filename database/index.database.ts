@@ -20,6 +20,7 @@ import { TalkMail } from '../models/talkMail';
 import { Chat } from '../models/chat';
 import { env } from '../config/env.config';
 import { Follow } from '../models/userFollow';
+import { ActivityLog } from '../models/userActivityLog';
 
 export const db = new DataSource({
    type: 'mysql',
@@ -49,7 +50,8 @@ export const db = new DataSource({
       SkillCv,
       TalkMail,
       Chat,
-      Follow
+      Follow,
+      ActivityLog
    ],
    migrations: ['migration/*.js'],
    logging: false,

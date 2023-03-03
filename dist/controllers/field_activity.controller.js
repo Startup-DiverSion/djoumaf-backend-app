@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const index_database_1 = require("../database/index.database");
 const server_error_1 = require("../utils/err/server.error");
-const jobs_1 = require("../models/jobs");
+const parameter_1 = require("../models/parameter");
 class FieldActivityController {
     constructor() { }
     //
@@ -29,21 +29,21 @@ class FieldActivityController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 // Init
-                const getAllJobs = index_database_1.db.getRepository(jobs_1.Job);
+                const jParameter = index_database_1.db.getRepository(parameter_1.Parameter);
                 let field_activity = [];
-                // Get
-                // const JFieldActivity = await getAllJobs.find({relations: {field_activity : true}})
-                // if(!JFieldActivity) return res.send({field_activity})
-                // JFieldActivity.forEach(field => {
-                //     for (let i = 0; i < field_activity.length; i++) {
-                //         const el = field_activity[i];
-                //         if(field.title !== el.name){
-                //             field_activity.push({name: field.title, count: 0 })
-                //         }else{
-                //             el.count = el.count + 1
-                //         }
-                //     }
-                // });
+                field_activity = yield jParameter.find({
+                    relations: { job: true, type_parameter: true },
+                    select: ['job', 'type_parameter'],
+                });
+                field_activity = field_activity.filter((el) => {
+                    return el.type_parameter.id === 1;
+                });
+                field_activity.forEach((el) => {
+                    el.job = el.job.length;
+                });
+                field_activity.sort((a, b) => {
+                    return b.job - a.job;
+                });
                 return res.send({ field_activity });
             }
             catch (error) {

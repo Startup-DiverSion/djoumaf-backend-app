@@ -23,7 +23,6 @@ class UserController {
                 const jUser = index_database_1.db.getRepository(user_1.User);
                 let getAllUser = [];
                 //    Limit
-                console.log(query.limit);
                 if (query.limit && query.limit >= 0) {
                     const limit = parseInt(query.limit);
                     getAllUser = yield jUser.find({ take: query.limit });

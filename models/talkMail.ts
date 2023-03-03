@@ -23,8 +23,17 @@ export class TalkMail {
    @Column()
    subject: string;
 
+   @Column({nullable: true})
+   candidacy_state: Boolean;
+
+   @Column({default: 0})
+   candidacy_see_profile: Boolean;
+
    @Column()
    from: string;
+
+   @Column()
+   to: string;
 
    @ManyToOne((type) => User, (user) => user.chats, {onDelete: 'CASCADE',})
    user: User;

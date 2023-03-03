@@ -4,9 +4,9 @@ import * as nodemailer from 'nodemailer';
 const transporter = nodemailer.createTransport({
    pool: true,
    port: 465, // true for 465, false for other ports
-   host: 'mail.djoumaf.com',
+   host: 'mail.djoumaf.net',
    auth: {
-      user: 'no-reply@djoumaf.com',
+      user: 'no-reply@djoumaf.net',
       pass: 'djoumaf-mail-20',
    },
    secure: true,

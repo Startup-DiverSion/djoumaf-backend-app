@@ -3,6 +3,7 @@ import { TypeParameter } from "./parameterType"
 import { Preference } from "./userPreference"
 import { Job } from "./jobs"
 import { Profile } from "./userProfile"
+import { ActivityLog } from "./userActivityLog"
 
 
 @Entity("parameters")
@@ -19,6 +20,9 @@ export class Parameter {
 
     @OneToMany(() => Preference, (preference) => preference.parameter, {cascade: true})
     preference: Preference
+
+    @OneToMany(() => ActivityLog, (log) => log.log_status, {cascade: true})
+    activity_log: ActivityLog
 
     @OneToMany(() => Profile, (p) => p.type, {cascade: true})
     profile: Profile

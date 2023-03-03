@@ -5,6 +5,7 @@ import serverError from '../utils/err/server.error';
 import { Parameter } from '../models/parameter';
 import useValidateError from '../utils/err/input.error';
 import { Job } from '../models/jobs';
+import { TypeParameter } from '../models/parameterType';
 
 class FieldActivityController {
    constructor() {}
@@ -13,44 +14,39 @@ class FieldActivityController {
    public async index(req: Request, res: Response) {
       try {
       } catch (error) {
-        serverError.catchError(res, error);
+         serverError.catchError(res, error);
       }
    }
 
+   //
+   public async number_activities_depending_job(req: Request, res: Response) {
+      try {
+         // Init
+         const jParameter = db.getRepository(Parameter);
+         let field_activity = [];
 
-    //
-    public async number_activities_depending_job(req: Request, res: Response) {
-        try {
-            // Init
-            const getAllJobs = db.getRepository(Job)
-            let field_activity = []
+         field_activity = await jParameter.find({
+            relations: { job: true, type_parameter: true },
+            select: ['job', 'type_parameter'],
+         });
 
-            // Get
-            // const JFieldActivity = await getAllJobs.find({relations: {field_activity : true}})
-            // if(!JFieldActivity) return res.send({field_activity})
+         field_activity = field_activity.filter((el: any) => {
+            return el.type_parameter.id === 1;
+         });
 
-            // JFieldActivity.forEach(field => {
+         field_activity.forEach((el: any) => {
+            el.job = el.job.length;
+         });
 
-            //     for (let i = 0; i < field_activity.length; i++) {
-            //         const el = field_activity[i];
-                    
-            //         if(field.title !== el.name){
-            //             field_activity.push({name: field.title, count: 0 })
-            //         }else{
-            //             el.count = el.count + 1
-            //         }
+         field_activity.sort((a, b) => {
+            return   b.job - a.job
+         })
 
-            //     }
-                
-            // });
-
-            return res.send({field_activity})
-
-        } catch (error) {
-          serverError.catchError(res, error);
-        }
-     }
-
+         return res.send({ field_activity });
+      } catch (error) {
+         serverError.catchError(res, error);
+      }
+   }
 
    //
    public async show(req: Request, res: Response) {}

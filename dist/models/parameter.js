@@ -15,6 +15,7 @@ const parameterType_1 = require("./parameterType");
 const userPreference_1 = require("./userPreference");
 const jobs_1 = require("./jobs");
 const userProfile_1 = require("./userProfile");
+const userActivityLog_1 = require("./userActivityLog");
 let Parameter = class Parameter {
 };
 __decorate([
@@ -33,6 +34,10 @@ __decorate([
     (0, typeorm_1.OneToMany)(() => userPreference_1.Preference, (preference) => preference.parameter, { cascade: true }),
     __metadata("design:type", userPreference_1.Preference)
 ], Parameter.prototype, "preference", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => userActivityLog_1.ActivityLog, (log) => log.log_status, { cascade: true }),
+    __metadata("design:type", userActivityLog_1.ActivityLog)
+], Parameter.prototype, "activity_log", void 0);
 __decorate([
     (0, typeorm_1.OneToMany)(() => userProfile_1.Profile, (p) => p.type, { cascade: true }),
     __metadata("design:type", userProfile_1.Profile)
