@@ -110,13 +110,13 @@ class ProfileCourseController {
 
             const getCourse = await jProfileCourse.findOne({where: {id: saveProfileCourse.id}, relations: {diploma: true}})
 
-            getCourse.date_start = moment(
-               getCourse.date_start
-         ).utc().format(' Y');
-         getCourse.date_finish =
-            !getCourse.currently_working
-               ? moment().utc().format(' Y')
-               : 'En cours';
+         //    getCourse.date_start = moment(
+         //       getCourse.date_start
+         // ).utc().format(' Y');
+         // getCourse.date_finish =
+         //    !getCourse.currently_working
+         //       ? moment().utc().format(' Y')
+         //       : 'En cours';
 
 
          return res.status(201).send({course: getCourse});
@@ -167,13 +167,13 @@ class ProfileCourseController {
 
             const getCourse = await jProfileCourse.findOne({where: {id}, relations: {diploma: true}})
 
-            getCourse.date_start = moment(
-               getCourse.date_start
-         ).format(' Y');
-         getCourse.date_finish =
-            !getCourse.currently_working
-               ? moment().format(' Y')
-               : 'En cours';
+         //    getCourse.date_start = moment(
+         //       getCourse.date_start
+         // ).format(' Y');
+         // getCourse.date_finish =
+         //    !getCourse.currently_working
+         //       ? moment().format(' Y')
+         //       : 'En cours';
 
 
          return res.status(201).send({course: getCourse});

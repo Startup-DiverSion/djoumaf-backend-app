@@ -14,6 +14,7 @@ import { User } from '../models/user';
 import { ToApplyJob } from '../models/jobToApply';
 import activity_logController from './activity_log.controller';
 import { slugGetter } from '../utils/adv/slug';
+import { ILike } from 'typeorm';
 
 class JobController extends ToApplyJob {
    //
@@ -21,38 +22,86 @@ class JobController extends ToApplyJob {
       try {
          // Init
          const jJob = db.getRepository(Job);
-         let { num_jobs, count }:any = req.query
-         let num_jobs_H:number, count_H :number;
-         console.log(num_jobs, count)
-
-         if(num_jobs == undefined && count == undefined) {
-             num_jobs_H = 100
-             count_H = 0
-         }else{
-             num_jobs_H =  parseInt(num_jobs)
-             count_H = parseInt(count)
-         }
+         let query: any = req.query;
 
          const relations = [
             'user',
-            'profile',
             'profile.media_profile',
             'profile.media_profile_cover',
             'work_place',
             'field_activity',
             'contract_type',
-         ]
+         ];
 
-         
+         const limit: any = query.limit ? parseInt(query.limit) : null;
+         const page: any = query.page ? parseInt(query.page) : null;
+         const search: any = query.search ? query.search : null;
+         let domain: any = query.domain ? parseInt(query.domain) : null;
 
-         // Get all jobs
-         const getAllJobs = await jJob.find({
-            relations,
-            take: Math.max(num_jobs_H, count_H),
+         const offset = limit && page ? (Number(page) - 1) * limit : 1;
+
+         // Get All Jobs
+
+         const job_length = await jJob.count();
+         let getAllJobs;
+         let job_current_length;
+         const filterJob = [];
+
+         if (search) {
+            getAllJobs = await jJob.findAndCount({
+               take: limit ? limit : 20,
+               skip: page ? offset : 1,
+               where: [
+                  { title: ILike(`%${search}%`) },
+                  { description: ILike(`%${search}%`) },
+               ],
+               order: { created_at: 'DESC' },
+               relations,
+            });
+
+            getAllJobs = getAllJobs[0];
+            job_current_length = getAllJobs[1];
+         } else {
+            if (domain) {
+               getAllJobs = await jJob.findAndCount({
+                  take: limit ? limit : 20,
+                  skip: page ? offset : 1,
+                  order: { created_at: 'DESC' },
+                  relations,
+               });
+
+               const byDomain = [];
+
+               getAllJobs[0].forEach((el) => {
+                  if (el.field_activity.id == domain) {
+                     byDomain.push(el);
+                  }
+               });
+
+               getAllJobs = byDomain;
+               job_current_length = byDomain.length;
+
+               console.log(getAllJobs);
+            } else {
+               getAllJobs = await jJob.findAndCount({
+                  take: limit ? limit : 20,
+                  skip: page ? offset : 1,
+                  order: { created_at: 'DESC' },
+                  relations,
+               });
+
+               getAllJobs = getAllJobs[0];
+               job_current_length = getAllJobs[1];
+            }
+         }
+
+         return res.status(201).send({
+            Jobs: getAllJobs,
+            job_length,
+            job_current_length: getAllJobs.length,
          });
-
-         res.status(201).send({ Jobs: getAllJobs });
       } catch (error) {
+         console.log(error);
          return serverError.catchError(res, error);
       }
    }
@@ -72,11 +121,11 @@ class JobController extends ToApplyJob {
          'job.profile.media_profile',
          'job.work_place',
          'job.contract_type',
-         'job.profile.user'
-      ]
+         'job.profile.user',
+      ];
 
       // Get job data based on id
-      const getJob:any = await jJob.findOne({
+      const getJob: any = await jJob.findOne({
          where: { slug },
          relations: [
             'user',
@@ -85,16 +134,20 @@ class JobController extends ToApplyJob {
             'work_place',
             'field_activity',
             'contract_type',
-            'user.follows'
+            'user.follows',
          ],
       });
       if (!getJob) return serverError.noDataMatches(res);
 
-      let interesting:any = await jFieldActivity.find({where: {id: getJob.field_activity.id}, relations})
-      
+      let interesting: any = await jFieldActivity.find({
+         where: { id: getJob.field_activity.id },
+         relations,
+      });
 
       // Return Data
-      return res.status(201).send({ job: getJob, interesting: interesting[0].job.slice(0, 4) });
+      return res
+         .status(201)
+         .send({ job: getJob, interesting: interesting[0].job.slice(0, 4) });
    }
 
    // Create Job
@@ -162,12 +215,10 @@ class JobController extends ToApplyJob {
             dead_line: moment(dead_line).toDate(),
             user: Auth.user,
             profile: (
-               await db
-                  .getRepository(User)
-                  .findOne({
-                     where: { id: Auth.user.id },
-                     relations: ['profile'],
-                  })
+               await db.getRepository(User).findOne({
+                  where: { id: Auth.user.id },
+                  relations: ['profile'],
+               })
             ).profile,
          });
          const saveJob = await jJob.save(newJob);
@@ -175,7 +226,7 @@ class JobController extends ToApplyJob {
 
          const ActivityLog = await activity_logController.create(req, res, {
             title,
-            tag: 'Offre d\'emploi',
+            tag: "Offre d'emploi",
             type: 'job',
             source: '/jobs/' + jSlug,
             source_id: saveJob.id,
@@ -254,12 +305,10 @@ class JobController extends ToApplyJob {
                dead_line: moment(dead_line).toDate(),
                user: Auth.user,
                profile: (
-                  await db
-                     .getRepository(User)
-                     .findOne({
-                        where: { id: Auth.user.id },
-                        relations: ['profile'],
-                     })
+                  await db.getRepository(User).findOne({
+                     where: { id: Auth.user.id },
+                     relations: ['profile'],
+                  })
                ).profile,
             }
          );
@@ -277,7 +326,7 @@ class JobController extends ToApplyJob {
       try {
          // Init
          const jJob = db.getRepository(Job);
-         const {id} = req.body;
+         const { id } = req.body;
 
          // Verify is job exist in database
          const isJob = await jJob.findOne({ where: { id: id } });
@@ -285,7 +334,7 @@ class JobController extends ToApplyJob {
 
          // Remove job
          await jJob.softDelete({
-            id
+            id,
          });
 
          return res

@@ -27,6 +27,8 @@ import postSystemController from '../controllers/postSystem.controller';
 import postCommentsController from '../controllers/postComments.controller';
 import searchController from '../controllers/search.controller';
 import oneActionController from '../controllers/oneAction.controller';
+import chatController from '../controllers/chat.controller';
+import notificationController from '../controllers/notification.controller';
 
 /**
  *
@@ -103,6 +105,7 @@ const Routes = (app: any) => {
 
    // All routes of profile : Cv Experience CONTROLLER
    router.post('/profile/experience', wareVerifyTokenUser,  ProfileExperienceController.index);
+   router.post('/profile/experience/show', wareVerifyTokenUser,  ProfileExperienceController.show);
    router.post(
       '/profile/experience/create',
       wareVerifyTokenUser,
@@ -153,8 +156,12 @@ const Routes = (app: any) => {
    router.get('/cercle/list', cercleController.myCercle); //Cercle list
    router.get(
       '/cercle/all_profile',
-      cercleController.ProfileAndCompnyThatFollow
-   ); //Follow is
+      cercleController.Profile
+   ); 
+   router.get(
+      '/cercle/all_profile_compagny',
+      cercleController.Company
+   ); 
 
    // All Routes : Post Content
    router.get(
@@ -273,6 +280,36 @@ const Routes = (app: any) => {
          res.status(201).send({ Feed: [] });
       }
    );
+
+
+   // Chat system
+   router.get(
+      '/messages',
+      wareVerifyTokenUser,
+      chatController.index
+   );
+
+
+   // Notification
+   router.get(
+      '/notifications',
+      wareVerifyTokenUser,
+      notificationController.index
+   );
+   router.post(
+      '/notification/update/distribution/all',
+      wareVerifyTokenUser,
+      notificationController.updateDistributionAll
+   );
+
+   router.post(
+      '/notification/update/distribution',
+      wareVerifyTokenUser,
+      notificationController.updateDistribution
+   );
+   
+   
+
 
    //Return All routes
    app.use('/api', router);

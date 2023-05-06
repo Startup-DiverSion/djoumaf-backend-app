@@ -194,7 +194,8 @@ class PostController {
 
          if (savePost) {
             if (req.files) {
-               for (let i = 0; i < req.files.length; i++) {
+               const files:any = req?.files?.length
+               for (let i = 0; i < files; i++) {
                   const file = req.files[i];
                   const newMedia = jMedia.create({
                      url: file.filename,
@@ -209,7 +210,7 @@ class PostController {
                   req,
                   res,
                   {
-                     title: description.substring(0, 30),
+                     title: description.substring(0, 30),   
                      tag: 'Publication',
                      type: 'post',
                      source: '/feeds/detail/' + jSlug,

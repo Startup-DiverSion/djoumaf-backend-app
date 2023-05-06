@@ -4,6 +4,7 @@ import serverError from '../utils/err/server.error';
 import { Media } from '../models/mediaUserProfile';
 import { MediaCover } from './../models/mediaUserProfileCover';
 import { MediaPost } from '../models/mediaPost';
+import { env } from '../config/env.config';
 
 class MediaController {
    //
@@ -36,6 +37,7 @@ class MediaController {
          if (req.file) {
             const newMedia = jMedia.create({
                url: req.file.filename,
+               original_url: env.HOST_CLIENT_IMAGE + '/' + req.file.filename,
                profile: profileID,
             });
             const saveMedia = await jMedia.save(newMedia);
@@ -43,6 +45,7 @@ class MediaController {
          } else {
             const newMedia = jMedia.create({
                url: null,
+               original_url: null,
                profile: profileID,
             });
             const saveMedia = await jMedia.save(newMedia);
@@ -83,6 +86,7 @@ class MediaController {
             { profile: id },
             {
                url: req.file.filename,
+               original_url: env.HOST_CLIENT_IMAGE + '/' + req.file.filename,
                profile: id,
             }
          );

@@ -59,13 +59,16 @@ class ProfileExperienceController {
          const { id } = req.body;
 
          // Get job data based on id
-         const getProfile = await jProfileExperience.findOne({
-            where: { id: id.id },
+         const experience = await jProfileExperience.findOne({
+            where: { id },
+            relations: [
+               'skill.parameter',
+               'type_contract',
+            ],
          });
-         if (!getProfile) return serverError.noDataMatches(res);
 
          // Return Data
-         return res.status(201).send({ profile: getProfile });
+         return res.status(201).send({ experience });
       } catch (error) {
          serverError.catchError(res, error);
       }
@@ -104,41 +107,38 @@ class ProfileExperienceController {
             workplace: work_place,
             currently_working,
             description,
-            skill: skills,
          });
          const saveProfileExperience = await jProfileExperience.save(
             newProfile
          );
-         if (!saveProfileExperience)
-            return serverError.notInsertToDatabase(res);
+         
 
          // Add competance of Experience
          let competance = skills;
          for (let i = 0; i < competance.length; i++) {
             const el = competance[i];
 
-            const parameter = await jParametre.findOne({
+            const parameter:any = await jParametre.findOne({
                where: { id: el.id },
                relations: { type_parameter: true },
             });
 
             const newSkill = jSkill.create({
                parameter: el.id,
-               user: Auth.user,
-               parent: parameter.type_parameter,
+               user: Auth.user.id,
+               parent: parameter.type_parameter.id,
                experience: saveProfileExperience,
             });
-            const savePreference = await jSkill.save(newSkill);
-            if (!savePreference) return serverError.notInsertToDatabase(res);
+            await jSkill.save(newSkill);
          }
 
-         saveProfileExperience.date_start = moment(
-            saveProfileExperience.date_start
-         ).format('MMMM Y');
-         saveProfileExperience.date_finish =
-            !saveProfileExperience.currently_working
-               ? moment().format('MMMM Y')
-               : 'En cours';
+         // saveProfileExperience.date_start = moment(
+         //    saveProfileExperience.date_start
+         // ).format('MMMM Y');
+         // saveProfileExperience.date_finish =
+         //    !saveProfileExperience.currently_working
+         //       ? moment().format('MMMM Y')
+         //       : 'En cours';
 
          return res.status(201).send({ experience: saveProfileExperience });
       } catch (error) {

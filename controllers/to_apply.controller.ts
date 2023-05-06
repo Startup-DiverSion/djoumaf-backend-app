@@ -126,7 +126,7 @@ class ToApplyController {
          if (!saveTalkMail) return serverError.notInsertToDatabase(res);
 
          // Send
-         return res.send({ to_apply_job: saveToApply });
+         return res.send({ to_apply_job: saveToApply, userOwnerOfPost });
       } catch (error) {
          console.log(error);
          serverError.catchError(res, error);

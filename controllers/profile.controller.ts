@@ -28,29 +28,23 @@ class ProfileController {
          const relations = ['user', 'media_profile', 'media_profile_cover'];
 
          const limit: any = query.limit ? parseInt(query.limit) : null;
+         const page: any = query.page  ? parseInt(query.page) : null;
          const type: any = query.type ? parseInt(query.type) : null;
-         const types: any = query.type ? parseInt(query.type) : null;
+
+      
+
          
 
-         if (limit && type) {
+         if (limit && type && page) {
+            const offset=(Number(page)-1)*limit;
             getAllProfile = await JProfile.find({
                take: limit,
+               skip: offset,
                where: { typeuser: type, slug: Not(IsNull()) },
                relations,
             });
-         } else if (limit && !type) {
-            getAllProfile = await JProfile.find({
-               take: limit,
-               where: { slug: Not(IsNull()) },
-               relations,
-            });
-         } else if (!limit && type) {
-            getAllProfile = await JProfile.find({
-               take: limit,
-               where: { slug: Not(IsNull()) },
-               relations,
-            });
-         } else {
+         } 
+         else {
             getAllProfile = await JProfile.find({
                where: { slug: Not(IsNull()) },
                relations,

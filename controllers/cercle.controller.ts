@@ -13,8 +13,10 @@ import slugify from 'slugify';
 import { User } from '../models/user';
 import { Profile } from '../models/userProfile';
 import { Follow } from './../models/userFollow';
+import { ILike, IsNull, Like, Not } from 'typeorm';
 
 class CercleController {
+   constructor() {}
    /**
     *
     *
@@ -123,6 +125,8 @@ class CercleController {
       }
    }
 
+  
+
    /**
     *
     *
@@ -130,107 +134,164 @@ class CercleController {
     *
     */
 
-   public async ProfileAndCompnyThatFollow(req: Request, res: Response) {
+   public async __MAIN_PROFILE(req: any, res: any, type: any) {
+      // Init
+      const jProfile = db.getRepository(Profile);
+      const jUser = db.getRepository(User);
+      const jUserFollow = db.getRepository(Follow);
+      const { Auth } = await userServices.current(req, res);
+
+      // Get the informations entry request
+      const query: any = req.query;
+      const typeProfileCompany: any = 64;
+
+      const limit: any = query.limit ? parseInt(query.limit) : null;
+      const page: any = query.page ? parseInt(query.page) : null;
+      const search: any = query.search ? query.search : null;
+
+      const offset = limit && page ? (Number(page) - 1) * limit : 1;
+
+      const relations = ['user', 'media_profile', 'media_profile_cover'];
+
+      // Get job data based on id
+      const __getMyCercleAbonnement = await jUserFollow.find({
+         where: { owner: Auth.user.id },
+         relations: [
+            'users',
+            'users.profile',
+            'users.profile.media_profile',
+            'users.profile.media_profile_cover',
+         ],
+      });
+
+      let getMyCercleAbonnement: any = [];
+      __getMyCercleAbonnement.forEach((el: any) => {
+         if (el.users.length !== 0) {
+            getMyCercleAbonnement.push(el.users[0]);
+         }
+      });
+
+      // For Company
+      let __profile;
+      const filterProfile = [
+         { typeuser: type, full_name: ILike(`%${search}%`), slug: Not(IsNull())  },
+         { typeuser: type, bio: ILike(`%${search}%`), slug: Not(IsNull())  },
+      ];
+      let count_total_profile :any;
+
+      if (search) {
+         
+         const T__profile = await jProfile.findAndCount({
+            take: limit ? limit : 30,
+            skip: page ? offset : 1,
+            order: { created_at: 'DESC' },
+            where: filterProfile,
+            relations,
+         });
+         __profile = T__profile[0]
+         count_total_profile = T__profile[1]
+      } else {
+         
+         const T__profile = await jProfile.findAndCount({
+            take: limit ? limit : 30,
+            skip: page ? offset : 1,
+            order: { created_at: 'DESC' },
+            where: { typeuser: type, slug: Not(IsNull()) },
+            relations,
+         });
+         __profile = T__profile[0]
+         count_total_profile = T__profile[1]
+      }
+
+
+        // Remove current profile
+        __profile.forEach((profile: any, index: any) => {
+         if (profile?.user.id == Auth.user.id) {
+            __profile.splice(index, 1);
+            count_total_profile = count_total_profile - 1
+         }
+      });
+
+      return {
+         Allprofile: __profile,
+         count_total_profile,
+         getMyCercleAbonnement,
+         Auth,
+      };
+   }
+
+
+
+    /**
+    *
+    *
+    *
+    *
+    */
+
+    public async Profile(req: Request, res: Response) {
       try {
          // Init
-         const jProfile = db.getRepository(Profile);
-         const jUser = db.getRepository(User);
-         const jUserFollow = db.getRepository(Follow);
-         const { Auth } = await userServices.current(req, res);
+         const { Allprofile, count_total_profile, getMyCercleAbonnement, Auth } =
+         await new CercleController().__MAIN_PROFILE(req, res, 65);
 
-         // Get the informations entry request
-         const { slug } = req.body;
-         const typeProfileParticulier: any = 65;
-         const typeProfileCompany: any = 64;
-         const relations = ['user', 'media_profile', 'media_profile_cover'];
-
-         // Get job data based on id
-         const __getMyCercleAbonnement = await jUserFollow.find({
-            where: { owner: Auth.user.id },
-            relations: [
-               'users',
-               'users.profile',
-               'users.profile.media_profile',
-               'users.profile.media_profile_cover',
-            ],
-         });
-         if (!__getMyCercleAbonnement) return serverError.noDataMatches(res);
-
-         let getMyCercleAbonnement: any = [];
-         __getMyCercleAbonnement.forEach((el: any) => {
-            if (el.users.length !== 0) {
-               getMyCercleAbonnement.push(el.users[0]);
-            }
-         });
-
-         // For Praticulier
-         let getAllProfile = await jProfile.find({
-            take: 30,
-            where: { typeuser: typeProfileParticulier },
-            relations,
-         });
-
-         getAllProfile.forEach((el: any) => {
+         Allprofile.forEach((el: any) => {
             el.isProfileFollow = false;
          });
 
          for (let i = 0; i < getMyCercleAbonnement.length; i++) {
-            for (let j = 0; j < getAllProfile.length; j++) {
+            for (let j = 0; j < Allprofile.length; j++) {
                if (
-                  getMyCercleAbonnement[i]?.profile?.id === getAllProfile[j].id
+                  getMyCercleAbonnement[i]?.profile?.id === Allprofile[j].id
                ) {
-                  getAllProfile.splice(j, 1);
+                  Allprofile.splice(j, 1);
                   i--;
                   j--;
                }
             }
          }
 
-         // For Company
-         let getAllProfileCompany = await jProfile.find({
-            take: 30,
-            where: { typeuser: typeProfileCompany },
-            relations,
-         });
-
-         getAllProfileCompany.forEach((el: any) => {
-            el.isProfileFollow = false;
-         });
-
-         // let __getAllProfileCompany = getAllProfileCompany.filter((el: any) => {
-         //    return el.id !== getMyCercleAbonnement.profile?.id;
-         // });
-
-         for (let i = 0; i < getMyCercleAbonnement.length; i++) {
-            for (let j = 0; j < getAllProfileCompany.length; j++) {
-               if (
-                  getMyCercleAbonnement[i]?.profile?.id ===
-                  getAllProfileCompany[j].id
-               ) {
-                  getAllProfileCompany.splice(j, 1);
-                  i--;
-                  j--;
-               }
-            }
-         }
-
-         // Remove current profile
-         getAllProfile.forEach((profile: any, index: any) => {
-            if (profile?.user.id == Auth.user.id) {
-               getAllProfile.splice(index, 1);
-            }
-         });
-
-         getAllProfileCompany.forEach((profile: any, index: any) => {
-            if (profile?.user.id == Auth.user.id) {
-               getAllProfileCompany.splice(index, 1);
-            }
-         });
+       
 
          // Return Data
          return res.status(201).send({
-            getAllProfile,
-            getAllProfileCompany,
+            getAllProfile: Allprofile,
+            count: Allprofile.length,
+            count_total_profile,
+            getMyCercleAbonnement,
+         });
+      } catch (error) {
+         console.log(error);
+         serverError.catchError(res, error);
+      }
+   }
+
+   public async Company(req: Request, res: Response) {
+      try {
+         const { Allprofile, count_total_profile, getMyCercleAbonnement, Auth } =
+            await new CercleController().__MAIN_PROFILE(req, res, 64);
+
+            Allprofile.forEach((el: any) => {
+            el.isProfileFollow = false;
+         });
+
+         for (let i = 0; i < getMyCercleAbonnement.length; i++) {
+            for (let j = 0; j < Allprofile.length; j++) {
+               if (getMyCercleAbonnement[i]?.profile?.id === Allprofile[j].id) {
+                  Allprofile.splice(j, 1);
+                  i--;
+                  j--;
+               }
+            }
+         }
+
+    
+
+         // Return Data
+         return res.status(201).send({
+            getAllProfileCompany: Allprofile,
+            count: Allprofile.length,
+            count_total_profile,
             getMyCercleAbonnement,
          });
       } catch (error) {
@@ -302,7 +363,7 @@ class CercleController {
                }
             });
          }
-        
+
          if (getIsAllReadyFollow === true) {
             // Remove job
             await jUserFollow.softDelete({

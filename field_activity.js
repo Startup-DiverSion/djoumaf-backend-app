@@ -1,0 +1,1 @@
+const FIELD_ACTIVITY = ['Serveuse/eur', "Gerante", 'Assistant(e)']

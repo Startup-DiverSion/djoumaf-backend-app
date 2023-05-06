@@ -28,7 +28,7 @@ class onActionController {
          const MediaUpdate = async (j: any) => {
             const __get = await jMedia.find();
             __get.forEach((el: any) => {
-               if (el.url && !el.original_url) {
+               if (el.url && el.original_url) {
                   j.update(
                      { id: el.id },
                      {

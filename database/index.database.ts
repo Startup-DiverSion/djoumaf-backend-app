@@ -26,6 +26,9 @@ import { MediaPost } from '../models/mediaPost';
 import { PostUserLike } from '../models/postUserLike';
 import { PostUserDjoumer } from '../models/postUserDjoumer';
 import { PostComments } from '../models/postComments';
+import { ChatMessage } from '../models/chatMessage';
+import { ChatMessageGroup } from '../models/chatMessageGroup';
+import { Notifications } from '../models/userNotification';
 
 export const db = new DataSource({
    type: 'mysql',
@@ -61,7 +64,10 @@ export const db = new DataSource({
       MediaPost,
       PostUserLike,
       PostUserDjoumer,
-      PostComments
+      PostComments,
+      ChatMessage,
+      ChatMessageGroup,
+      Notifications
    ],
    migrations: ['migration/*.js'],
    logging: false,

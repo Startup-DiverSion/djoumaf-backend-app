@@ -4,6 +4,7 @@ import { Preference } from "./userPreference"
 import { Job } from "./jobs"
 import { Profile } from "./userProfile"
 import { ActivityLog } from "./userActivityLog"
+import { Notifications } from "./userNotification"
 
 
 @Entity("parameters")
@@ -20,6 +21,9 @@ export class Parameter {
 
     @OneToMany(() => Preference, (preference) => preference.parameter, {cascade: true})
     preference: Preference
+
+    @OneToMany(() => Notifications, (notif) => notif.notification_type, {cascade: true})
+    notification: Notifications
 
     @OneToMany(() => ActivityLog, (log) => log.log_status, {cascade: true})
     activity_log: ActivityLog
