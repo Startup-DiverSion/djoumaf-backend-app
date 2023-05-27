@@ -29,6 +29,7 @@ import { PostComments } from '../models/postComments';
 import { ChatMessage } from '../models/chatMessage';
 import { ChatMessageGroup } from '../models/chatMessageGroup';
 import { Notifications } from '../models/userNotification';
+import { Djoum } from '../models/userFDjoum';
 
 export const db = new DataSource({
    type: 'mysql',
@@ -67,7 +68,8 @@ export const db = new DataSource({
       PostComments,
       ChatMessage,
       ChatMessageGroup,
-      Notifications
+      Notifications,
+      Djoum
    ],
    migrations: ['migration/*.js'],
    logging: false,

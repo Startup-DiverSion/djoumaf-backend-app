@@ -101,43 +101,41 @@ class ChatController {
             where: { chat_group: chatID, view: false },
             relations: { user: true, chat_group: true },
          });
-         let isMessageToChange = false;
 
-         const toDisplay: any = getAllMessage.find((msg) => {
-            return Auth.user.id !== msg.user.id;
+         const toDisplay = getAllMessage.filter((msg) => {
+            return Auth.user.id != msg.user.id && chatID == msg.chat_group.id;
          });
 
          if (toDisplay) {
-            await jChatMessage.update(
-               {
-                  user: toDisplay.user.id,
-                  chat_group: chatID,
-               },
-               { view: true }
-            );
-
+            toDisplay.forEach(async (el: any) => {
+               jChatMessage.update(
+                  {
+                     user: el.user.id,
+                     chat_group: chatID,
+                  },
+                  { view: true }
+               );
+            });
          }
 
-               const getGroupSingle: any = await jChatGroup.findOne({
-                  where: { id: chatID },
-                  relations: relations,
-               });
+         const getGroupSingle: any = await jChatGroup.findOne({
+            where: { id: chatID },
+            relations: relations,
+         });
 
-               getGroupSingle.display =
-                  Auth.user.id === getGroupSingle.userEmit.id
-                     ? getGroupSingle.userOn
-                     : getGroupSingle.userEmit;
+         getGroupSingle.display =
+            Auth.user.id === getGroupSingle.userEmit.id
+               ? getGroupSingle.userOn
+               : getGroupSingle.userEmit;
 
-               getGroupSingle.owner =
-                  Auth.user.id !== getGroupSingle.userEmit.id
-                     ? getGroupSingle.userOn
-                     : getGroupSingle.userEmit;
+         getGroupSingle.owner =
+            Auth.user.id !== getGroupSingle.userEmit.id
+               ? getGroupSingle.userOn
+               : getGroupSingle.userEmit;
 
-               getGroupSingle.no_view = 0;
-               io.emit('chat_view', chatID, Auth.user.id);
-               res.send({ getGroupSingle });
-            
-       
+         getGroupSingle.no_view = 0;
+         io.emit('chat_view', chatID, Auth.user.id);
+         res.send({ getGroupSingle });
       } catch (error) {
          console.log(error);
          serverError.catchError(res, error);

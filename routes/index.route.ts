@@ -49,6 +49,9 @@ const Routes = (app: any) => {
       ProfileController.updateBio
    );
    router.get('/parameter/create/skills', ParameterController.createAddSkills);
+   router.get('/parameter/create/field_activity', ParameterController.createAddFieldActivity);
+
+   
    router.get('/one/media/update', oneActionController.MediaProfileUrlToOriginalUrl);
 
    
@@ -153,7 +156,7 @@ const Routes = (app: any) => {
    router.post('/cercle/follow',wareVerifyTokenUser, cercleController.follow); //Follow
    router.post('/cercle/follow/count',wareVerifyTokenUser, cercleController.followCount); //Follow
    router.post('/cercle/is_follow', wareVerifyTokenUser, cercleController.isFollow); //Follow is
-   router.get('/cercle/list', cercleController.myCercle); //Cercle list
+   router.get('/cercle/list', wareVerifyTokenUser, cercleController.myCercle); //Cercle list
    router.get(
       '/cercle/all_profile',
       cercleController.Profile
@@ -180,6 +183,11 @@ const Routes = (app: any) => {
       ImageConfig.uploadFile().array('files'),
       postController.create
    ); 
+   router.post(
+      '/post/delete',
+      wareVerifyTokenUser,
+      postController.delete
+   );
 // All Routes : Post system
    router.post(
       '/post/like',
@@ -217,7 +225,7 @@ const Routes = (app: any) => {
   
 
    // All users
-   router.get('/user', UserController.index);
+   // router.get('/user-s', UserController.index);
 
    // All Routes medias
    router.post(

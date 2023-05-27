@@ -19,11 +19,6 @@ class MediaController {
    //
    public async show(req: Request, res: Response) {}
 
-
- 
-
-
-
    //
    public async create(req: Request, res: Response, profileID: any) {
       try {
@@ -36,25 +31,23 @@ class MediaController {
          //  Media
          if (req.file) {
             const newMedia = jMedia.create({
-               url: req.file.filename,
                original_url: env.HOST_CLIENT_IMAGE + '/' + req.file.filename,
                profile: profileID,
             });
-            const saveMedia = await jMedia.save(newMedia);
-            if (!saveMedia) return serverError.notInsertToDatabase(res);
+            await jMedia.save(newMedia);
          } else {
             const newMedia = jMedia.create({
                url: null,
                original_url: null,
                profile: profileID,
             });
-            const saveMedia = await jMedia.save(newMedia);
-            if (!saveMedia) return serverError.notInsertToDatabase(res);
+            await jMedia.save(newMedia);
          }
 
          //  Media Cover
          const newMediaCover = jMediaCover.create({
             url: null,
+            original_url: null,
             profile: profileID,
          });
          const saveMediaCover = await jMediaCover.save(newMediaCover);

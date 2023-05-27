@@ -197,7 +197,7 @@ class ProfileExperienceController {
             const el: any = getAllSkill[i];
             if (
                el.user.id === Auth.user.id &&
-               el.experience.id === getProfileExperience.id
+               el.experience?.id == getProfileExperience.id
             ) {
                await jSkill.delete({ id: el.id });
             }

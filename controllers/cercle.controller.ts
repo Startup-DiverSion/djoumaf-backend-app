@@ -29,41 +29,45 @@ class CercleController {
       const jProfile = db.getRepository(Profile);
       const jUser = db.getRepository(User);
       const jUserFollow = db.getRepository(Follow);
+      const { Auth } = await userServices.current(req, res);
+
+      const query: any = req.query;
+      const limit: any = query.limit ? parseInt(query.limit) : null;
+      const page: any = query.page ? parseInt(query.page) : null;
+      const search: any = query.search ? query.search : null;
+
+      const offset = limit && page ? (Number(page) - 1) * limit : 1;
+
+      const relations = [
+         'users.profile.user',
+         'users.profile.media_profile',
+         'users.profile.media_profile_cover',
+      ];
 
       // Get job data based on id
-      const __getMyCercleAbonnement = await jUserFollow.find({
+      const __getMyCercle = await jUserFollow.find({
          where: { owner: AuthUserCurrentConnect },
-         relations: [
-            'users',
-            'users.profile',
-            'users.profile.user',
-            'users.profile.media_profile',
-            'users.profile.media_profile_cover',
-         ],
+         relations,
+         order: { created_at: 'DESC' },
+      });
+
+      let getMyCercleAbonnement = [];
+      __getMyCercle.forEach((el: any) => {
+         if (el.users.length !== 0) {
+            el.users[0].isProfileFollow = true;
+            getMyCercleAbonnement.push(el.users[0]);
+         }
       });
 
       // Get all souscrible
       let getMyCercleAbonner = [];
-      const __getMyCercleAbonner: any = await jUserFollow.find({
-         relations: [
-            'users.profile',
-            'users.profile.media_profile',
-            'users.profile.user',
-            'users.profile.media_profile_cover',
-         ],
-      });
-      __getMyCercleAbonner.forEach((el: any) => {
-         if (el.users[0]?.id == AuthUserCurrentConnect) {
+      __getMyCercle.forEach((el: any) => {
+         if (
+            el.users[0]?.id == AuthUserCurrentConnect &&
+            el.users[0]?.id != Auth.user.id
+         ) {
             el.users[0].isProfileFollow = true;
             getMyCercleAbonner.push(el.users[0]);
-         }
-      });
-
-      let getMyCercleAbonnement = [];
-      __getMyCercleAbonnement.forEach((el: any) => {
-         if (el.users.length !== 0) {
-            el.users[0].isProfileFollow = true;
-            getMyCercleAbonnement.push(el.users[0]);
          }
       });
 
@@ -125,8 +129,6 @@ class CercleController {
       }
    }
 
-  
-
    /**
     *
     *
@@ -174,13 +176,16 @@ class CercleController {
       // For Company
       let __profile;
       const filterProfile = [
-         { typeuser: type, full_name: ILike(`%${search}%`), slug: Not(IsNull())  },
-         { typeuser: type, bio: ILike(`%${search}%`), slug: Not(IsNull())  },
+         {
+            typeuser: type,
+            full_name: ILike(`%${search}%`),
+            slug: Not(IsNull()),
+         },
+         { typeuser: type, bio: ILike(`%${search}%`), slug: Not(IsNull()) },
       ];
-      let count_total_profile :any;
+      let count_total_profile: any;
 
       if (search) {
-         
          const T__profile = await jProfile.findAndCount({
             take: limit ? limit : 30,
             skip: page ? offset : 1,
@@ -188,10 +193,9 @@ class CercleController {
             where: filterProfile,
             relations,
          });
-         __profile = T__profile[0]
-         count_total_profile = T__profile[1]
+         __profile = T__profile[0];
+         count_total_profile = T__profile[1];
       } else {
-         
          const T__profile = await jProfile.findAndCount({
             take: limit ? limit : 30,
             skip: page ? offset : 1,
@@ -199,16 +203,15 @@ class CercleController {
             where: { typeuser: type, slug: Not(IsNull()) },
             relations,
          });
-         __profile = T__profile[0]
-         count_total_profile = T__profile[1]
+         __profile = T__profile[0];
+         count_total_profile = T__profile[1];
       }
 
-
-        // Remove current profile
-        __profile.forEach((profile: any, index: any) => {
+      // Remove current profile
+      __profile.forEach((profile: any, index: any) => {
          if (profile?.user.id == Auth.user.id) {
             __profile.splice(index, 1);
-            count_total_profile = count_total_profile - 1
+            count_total_profile = count_total_profile - 1;
          }
       });
 
@@ -220,58 +223,24 @@ class CercleController {
       };
    }
 
-
-
-    /**
+   /**
     *
     *
     *
     *
     */
 
-    public async Profile(req: Request, res: Response) {
+   public async Profile(req: Request, res: Response) {
       try {
          // Init
-         const { Allprofile, count_total_profile, getMyCercleAbonnement, Auth } =
-         await new CercleController().__MAIN_PROFILE(req, res, 65);
-
-         Allprofile.forEach((el: any) => {
-            el.isProfileFollow = false;
-         });
-
-         for (let i = 0; i < getMyCercleAbonnement.length; i++) {
-            for (let j = 0; j < Allprofile.length; j++) {
-               if (
-                  getMyCercleAbonnement[i]?.profile?.id === Allprofile[j].id
-               ) {
-                  Allprofile.splice(j, 1);
-                  i--;
-                  j--;
-               }
-            }
-         }
-
-       
-
-         // Return Data
-         return res.status(201).send({
-            getAllProfile: Allprofile,
-            count: Allprofile.length,
+         const {
+            Allprofile,
             count_total_profile,
             getMyCercleAbonnement,
-         });
-      } catch (error) {
-         console.log(error);
-         serverError.catchError(res, error);
-      }
-   }
+            Auth,
+         } = await new CercleController().__MAIN_PROFILE(req, res, 65);
 
-   public async Company(req: Request, res: Response) {
-      try {
-         const { Allprofile, count_total_profile, getMyCercleAbonnement, Auth } =
-            await new CercleController().__MAIN_PROFILE(req, res, 64);
-
-            Allprofile.forEach((el: any) => {
+         Allprofile.forEach((el: any) => {
             el.isProfileFollow = false;
          });
 
@@ -285,13 +254,49 @@ class CercleController {
             }
          }
 
-    
+         // Return Data
+         return res.status(201).send({
+            getAllProfile: Allprofile,
+            count: Allprofile.length,
+            count_total_profile:
+               count_total_profile - getMyCercleAbonnement.length,
+            getMyCercleAbonnement,
+         });
+      } catch (error) {
+         console.log(error);
+         serverError.catchError(res, error);
+      }
+   }
+
+   public async Company(req: Request, res: Response) {
+      try {
+         const {
+            Allprofile,
+            count_total_profile,
+            getMyCercleAbonnement,
+            Auth,
+         } = await new CercleController().__MAIN_PROFILE(req, res, 64);
+
+         Allprofile.forEach((el: any) => {
+            el.isProfileFollow = false;
+         });
+
+         for (let i = 0; i < getMyCercleAbonnement.length; i++) {
+            for (let j = 0; j < Allprofile.length; j++) {
+               if (getMyCercleAbonnement[i]?.profile?.id === Allprofile[j].id) {
+                  Allprofile.splice(j, 1);
+                  i--;
+                  j--;
+               }
+            }
+         }
 
          // Return Data
          return res.status(201).send({
             getAllProfileCompany: Allprofile,
             count: Allprofile.length,
-            count_total_profile,
+            count_total_profile:
+               count_total_profile - getMyCercleAbonnement.length,
             getMyCercleAbonnement,
          });
       } catch (error) {

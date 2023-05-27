@@ -30,6 +30,7 @@ import { PostUserLike } from './postUserLike';
 import { PostComments } from './postComments';
 import { ChatMessageGroup } from './chatMessageGroup';
 import { Notifications } from './userNotification';
+import { Djoum } from './userFDjoum';
 
 @Entity('users')
 export class User {
@@ -126,6 +127,10 @@ export class User {
    @ManyToMany((type) => Follow, (follow) => follow.users)
    @JoinTable({ name: 'follow_into_users' })
    follows: Follow[];
+
+   @ManyToMany((type) => Djoum, (djoum) => djoum.users)
+   @JoinTable({ name: 'fdjoum_into_users' })
+   djoums: Djoum[];
 
    @CreateDateColumn()
    created_at: Date;

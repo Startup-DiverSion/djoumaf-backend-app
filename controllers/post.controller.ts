@@ -23,29 +23,30 @@ class PostController {
          // Initialize
          const jPosts = db.getRepository(Post);
          const { Auth } = await userServices.current(req, res);
-
+         const relations = [
+            'user.profile.media_profile',
+            'user.follows.users',
+            'media',
+            'like.user',
+            'like.post',
+            'djoumer.user',
+            'djoumer.post',
+            'comments.post',
+            'comments.user.profile.media_profile',
+         ];
          // starting
-         const getPostAll = await jPosts.find({
-            relations: [
-               'user',
-               'user.profile',
-               'user.profile.media_profile',
-               'user.follows',
-               'user.follows.users',
-               'media',
-               'like',
-               'like.user',
-               'like.post',
-               'djoumer',
-               'djoumer.user',
-               'djoumer.post',
-               'comments',
-               'comments.post',
-               'comments.user',
-               'comments.user.profile',
-               'comments.user.profile.media_profile',
-            ],
-         });
+         let getPostAll = await jPosts.find({
+            relations,
+         });;
+
+         if (query.owner_id) {
+            
+
+            getPostAll = getPostAll.filter((post) => {
+               return post.user.id == query.owner_id;
+            });
+         }
+
          getPostAll.forEach((post: any) => {
             // Verify if user to already liked post
             const isAlReadyLikedPost = post.like.find((el: any) => {
@@ -119,25 +120,22 @@ class PostController {
          const { Auth } = await userServices.current(req, res);
 
          // starting
-         const getPost :any = await jPost.findOne({
+
+         const relations = [
+            'user.profile.media_profile',
+            'user.follows.users',
+            'media',
+            'like.user',
+            'like.post',
+            'djoumer.user',
+            'djoumer.post',
+            'comments.post',
+            'comments.user.profile.media_profile',
+         ];
+
+         let getPost: any = await jPost.findOne({
             where: { slug },
-            relations: [
-               'user',
-               'user.profile',
-               'user.profile.media_profile',
-               'user.follows',
-               'user.follows.users',
-               'media',
-               'like.user',
-               'like.post',
-               'djoumer.user',
-               'djoumer.post',
-               'comments',
-               'comments.post',
-               'comments.user',
-               'comments.user.profile',
-               'comments.user.profile.media_profile',
-            ],
+            relations,
          });
 
          const isAlReadyLikedPost = getPost.like.find((el: any) => {
@@ -146,7 +144,6 @@ class PostController {
 
          getPost.like_count = getPost.like.length;
          getPost.is_liked = isAlReadyLikedPost ? true : null;
-         
 
          const isAlReadyDjoumerPost = getPost.djoumer.find((el: any) => {
             return el.user.id == Auth.user.id && el.post.id == getPost.id;
@@ -157,9 +154,9 @@ class PostController {
 
          const isAlReadyCommentPost = getPost.comments.find((el: any) => {
             return el.user.id == Auth.user.id && el.post.id == getPost.id;
-            });
+         });
 
-            getPost.comment_count = getPost.comments.length;
+         getPost.comment_count = getPost.comments.length;
          getPost.is_comment = isAlReadyCommentPost ? true : null;
 
          return res.send({ post: getPost });
@@ -194,7 +191,7 @@ class PostController {
 
          if (savePost) {
             if (req.files) {
-               const files:any = req?.files?.length
+               const files: any = req?.files?.length;
                for (let i = 0; i < files; i++) {
                   const file = req.files[i];
                   const newMedia = jMedia.create({
@@ -210,7 +207,7 @@ class PostController {
                   req,
                   res,
                   {
-                     title: description.substring(0, 30),   
+                     title: description.substring(0, 30),
                      tag: 'Publication',
                      type: 'post',
                      source: '/feeds/detail/' + jSlug,
@@ -230,7 +227,28 @@ class PostController {
    public async update(req: Request, res: Response) {}
 
    //
-   public async delete(req: Request, res: Response) {}
+   public async delete(req: Request, res: Response) {
+      try {
+         // Init
+         const jPost = db.getRepository(Post);
+         const { id } = req.body;
+
+         // Verify is post exist in database
+         const isPost = await jPost.findOne({ where: { id: id } });
+         if (!isPost) return serverError.noDataMatches(res);
+
+         // Remove Post
+         await jPost.softDelete({
+            id,
+         });
+
+         return res
+            .status(201)
+            .send({ post: { message: 'Post supprimer avec succès!' } });
+      } catch (error) {
+         return serverError.catchError(res, error);
+      }
+   }
 }
 
 export default new PostController();

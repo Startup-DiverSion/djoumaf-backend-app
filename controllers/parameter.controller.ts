@@ -5,6 +5,7 @@ import serverError from '../utils/err/server.error';
 import { Parameter } from '../models/parameter';
 import useValidateError from '../utils/err/input.error';
 import { skills } from '../skills';
+import { FIELD_ACTIVITY } from '../field_activity';
 
 class ArticleController {
    constructor() {}
@@ -17,35 +18,28 @@ class ArticleController {
             .getRepository(Parameter)
             .find({ relations: { type_parameter: true } });
 
-       
-
-            return res.send({ parameter: xParametre });
-        
+         return res.send({ parameter: xParametre });
       } catch (error) {
          console.log(error);
       }
    }
 
+   //
+   public async indexQuery(req: Request, res: Response) {
+      try {
+         const query: any = req.query.type_parametre;
 
-      //
-      public async indexQuery(req: Request, res: Response) {
-         try {
-            const query: any = req.query.type_parametre;
+         // if(!query) return useValidateError.withoutInput(res)
 
-            // if(!query) return useValidateError.withoutInput(res)
+         const xParametre = await db
+            .getRepository(Parameter)
+            .find({ relations: { type_parameter: true } });
 
-            const xParametre = await db
-               .getRepository(Parameter)
-               .find({ relations: { type_parameter: true } });
-   
-          
-   
-               return res.send({ parameter: xParametre });
-           
-         } catch (error) {
-            console.log(error);
-         }
+         return res.send({ parameter: xParametre });
+      } catch (error) {
+         console.log(error);
       }
+   }
 
    //
    public async show(req: Request, res: Response) {}
@@ -54,38 +48,67 @@ class ArticleController {
    public async create(req: Request, res: Response, profileID: any) {
       try {
          // Init
-       
-
          // Initialize the user profile
-       
-
-       
       } catch (error) {
          serverError.catchError(res, error);
       }
    }
 
-   // 
+   //
    public async createAddSkills(req: Request, res: Response, profileID: any) {
       try {
          // Init
-         const jParams = db.getRepository(Parameter)
-         const typeParms:any = 7
+         const jParams = db.getRepository(Parameter);
+         const typeParms: any = 7;
 
-         
+         const getAllParams = await jParams.find({
+            where: { type_parameter: typeParms },
+         });
 
          // Initialize the paramate
          skills.forEach((el) => {
+            getAllParams.forEach((prms) => {
+               if (
+                  !prms.title
+                     .toLocaleLowerCase()
+                     .includes(el.toLocaleLowerCase())
+               ) {
+                  const newParms = jParams.create({
+                     title: el,
+                     type_parameter: typeParms,
+                  });
+                  jParams.save(newParms);
+               }
+            });
+         });
+
+         return res.status(201).send({ Result: 'fait' });
+      } catch (error) {
+         serverError.catchError(res, error);
+      }
+   }
+
+   //
+   public async createAddFieldActivity(
+      req: Request,
+      res: Response,
+      profileID: any
+   ) {
+      try {
+         // Init
+         const jParams = db.getRepository(Parameter);
+         const typeParms: any = 1;
+
+         // Initialize the paramate
+         FIELD_ACTIVITY.forEach((el) => {
             const newParms = jParams.create({
                title: el,
-               type_parameter: typeParms
-            })
-             jParams.save(newParms)
-         })
-        
-       
-         return res.status(201).send({Result: 'fait'})
-       
+               type_parameter: typeParms,
+            });
+            jParams.save(newParms);
+         });
+
+         return res.status(201).send({ Result: 'fait' });
       } catch (error) {
          serverError.catchError(res, error);
       }

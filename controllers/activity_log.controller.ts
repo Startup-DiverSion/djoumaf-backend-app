@@ -8,6 +8,7 @@ import { Job } from '../models/jobs';
 import { TypeParameter } from '../models/parameterType';
 import { ActivityLog } from '../models/userActivityLog';
 import userServices from '../services/user.services';
+import moment = require('moment');
 
 interface CREATED {
    title: string;
@@ -29,13 +30,13 @@ class ActivityLogController {
         const jActivityLog = db.getRepository(ActivityLog)
         const { Auth } = await userServices.current(req, res);
 
-        let getAllActivityLog = await jActivityLog.find({relations: {log_status: true, user: true},})
-        getAllActivityLog = getAllActivityLog.filter((el:any) => {
-            return el.user.id === Auth.user.id
+        let getAllActivityLog = await jActivityLog.find({relations: {log_status: true, user: true}, order: { created_at: 'DESC' }})
+        getAllActivityLog = getAllActivityLog.filter((el) => {
+            return el.user.id === Auth.user.id && moment().diff(moment(el.created_at), 'months', true) <= 1.5
         })
 
-        console.log(getAllActivityLog)
 
+        
         return res.status(201).send({activity_log: getAllActivityLog})
 
       } catch (error) {

@@ -14,6 +14,7 @@ import MediaController from './media.controller';
 import { MediaCover } from '../models/mediaUserProfileCover';
 import { Not, IsNull } from 'typeorm';
 import { slugGetter } from '../utils/adv/slug';
+import { env } from '../config/env.config';
 
 class ProfileController {
    constructor() {}
@@ -198,7 +199,8 @@ class ProfileController {
             jMedia.update(
                { profile: id },
                {
-                  url: req.file.filename
+                  url: req.file.filename,
+                  original_url: env.HOST_CLIENT_IMAGE + '/' + req.file.filename,
                }
             );
          }

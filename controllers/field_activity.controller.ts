@@ -31,7 +31,7 @@ class FieldActivityController {
          });
 
          field_activity = field_activity.filter((el: any) => {
-            return el.type_parameter.id === 1;
+            return el.type_parameter.id === 1 && el.job.length > 0;
          });
 
          field_activity.forEach((el: any) => {
